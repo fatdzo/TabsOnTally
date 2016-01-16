@@ -1,37 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/view_bill_item"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1.0"
+    android:layout_weight="1.0"
     >
-
+    
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0.1"
         >
         <TextView
-            android:id="@+id/txt_BillIndex"
+            android:id="@+id/txt_BillDetailVoteIndex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="1.0"
+            android:text="1."
             />
 
     </LinearLayout>
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
         >
         <TextView
-            android:id="@+id/txt_BillName"
+            android:id="@+id/txt_BillDetailVoteName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bill name"
+            android:text="Lastname, Name"
             />
 
     </LinearLayout>
@@ -42,12 +38,13 @@
         android:layout_weight="0.4"
         >
         <TextView
-            android:id="@+id/txt_BillVote"
+            android:id="@+id/txt_BillDetailVoteVote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bill vote"
+            android:text="Vote"
             />
 
     </LinearLayout>
+
 
 </LinearLayout>

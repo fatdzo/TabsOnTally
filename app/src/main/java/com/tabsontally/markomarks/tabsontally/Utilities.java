@@ -1,5 +1,15 @@
 package com.tabsontally.markomarks.tabsontally;
 
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 /**
  * Created by MarkoPhillipMarkovic on 1/16/2016.
  */
@@ -41,6 +51,13 @@ public class Utilities {
 
         return result;
     }
+
+    public String GetJSON(String urlz)
+    {
+
+      return "";
+    }
+
 
 
 
