@@ -9,11 +9,14 @@ public class BillItem {
     public int Index;
     public String Id;
 
+    public String Vote;
+
     public BillItem()
     {
         Title = "";
         Index = 0;
         Id="none";
+        Vote = "Fail";
     }
 
 
