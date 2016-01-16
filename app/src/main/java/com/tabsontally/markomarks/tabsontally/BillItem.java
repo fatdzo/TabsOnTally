@@ -11,7 +11,8 @@ public class BillItem {
 
     public String Vote;
 
-    public BillItem()
+    public
+    BillItem()
     {
         Title = "";
         Index = 0;

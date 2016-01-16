@@ -31,8 +31,6 @@ public class BillDetailActivity extends AppCompatActivity {
         BillVoteItem temp = new BillVoteItem();
         billVoteItems.add(temp);
 
-
-
         billVoteAdapter = new BillVoteAdapter(context, billVoteItems);
 
         ListView lstVoters =  (ListView) findViewById(R.id.lst_Voters);

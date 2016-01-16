@@ -2,6 +2,7 @@ package com.tabsontally.markomarks.tabsontally;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by MarkoPhillipMarkovic on 1/16/2016.
@@ -21,10 +23,25 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
 
     private Context ctx;
 
+    private List<BillItem> itemz;
+
     public BillAdapter(Context context, ArrayList<BillItem> items)
     {
         super(context, 0, items);
         ctx = context;
+
+        itemz = items;
+
+    }
+
+    public void SetAdapterList(ArrayList<BillItem> bills)
+    {
+        itemz.clear();
+        itemz = bills.subList(0, 20);
+
+        notifyDataSetChanged();
+        Log.e("tag", "NUMBER OF ITEMS: " + itemz.size());
+
     }
 
 
