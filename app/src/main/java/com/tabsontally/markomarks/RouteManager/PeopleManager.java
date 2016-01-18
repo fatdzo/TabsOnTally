@@ -45,7 +45,6 @@ public class PeopleManager extends BaseRouteManager {
         mState = PULLING;
         mCurrentPage = 1;
         pullRecordStep(mCurrentPage++);
-        Log.d("blah", String.valueOf(mPeople.size()));
     }
 
     private void pullRecordStep(int page) {

@@ -8,12 +8,16 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.tabsontally.markomarks.RouteManager.BillManager;
 import com.tabsontally.markomarks.RouteManager.PeopleManager;
 import com.tabsontally.markomarks.model.APIConfig;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -29,6 +33,61 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView billsListView;
 
+    private TextView txtCurrentPage;
+
+    private int CurrentPage = 1;
+    private int MaxPage = 71;
+    private int MinPage = 1;
+
+    private Button btn_PrevPageButton;
+    private Button btn_NextPageButton;
+    private Button btn_Prev5PagesButton;
+    private Button btn_Next5PagesButton;
+
+
+    private int get5NextPages()
+    {
+        if(CurrentPage + 5 > MaxPage)
+        {
+            return MaxPage;
+        }
+
+        return CurrentPage + 5;
+    }
+
+
+    private int getNextPage()
+    {
+        if(CurrentPage < MaxPage)
+        {
+            return CurrentPage + 1;
+        }
+
+        return MaxPage;
+
+    }
+
+    private int getPrev5Pages()
+    {
+        if(CurrentPage - 5 > MinPage)
+        {
+            return CurrentPage - 5;
+        }
+
+        return MinPage;
+    }
+
+
+    private int getPreviousPage()
+    {
+        if(CurrentPage > MinPage + 1)
+        {
+            return CurrentPage - 1;
+        }
+
+        return MinPage;
+    }
+
 
     PeopleManager mPeopleManager;
 
@@ -43,15 +102,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
                 case BillManager.PULL_SUCCESS: {
-                    Log.e("TABONTALLY", "SUCCCEESS");
                     billList.clear();
                     billList.addAll(bllManager.getBillItemList());
 
                     billAdapter.setAdapterList(billList);
-
-                    billAdapter.notifyDataSetChanged();
-
-
                     break;
                 }
             }
@@ -102,6 +156,92 @@ public class MainActivity extends AppCompatActivity {
         billsListView = (ListView)findViewById(R.id.lst_Bills);
         billAdapter = new BillAdapter(context, billList);
         billsListView.setAdapter(billAdapter);
+
+        txtCurrentPage = (TextView)findViewById(R.id.txt_currentPage);
+        txtCurrentPage.setText(String.valueOf(CurrentPage));
+
+        btn_NextPageButton = (Button)findViewById(R.id.btn_nextPage);
+
+        btn_Next5PagesButton = (Button)findViewById(R.id.btn_next5Pages);
+
+        btn_PrevPageButton = (Button)findViewById(R.id.btn_prevPage);
+        btn_PrevPageButton.setEnabled(false);
+
+        btn_Prev5PagesButton = (Button)findViewById(R.id.btn_prev5Pages);
+        btn_Prev5PagesButton.setEnabled(false);
+
+        btn_Next5PagesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CurrentPage = get5NextPages();
+
+                if (CurrentPage == MaxPage) {
+                    btn_NextPageButton.setEnabled(false);
+                    btn_Next5PagesButton.setEnabled(false);
+                }
+
+                btn_PrevPageButton.setEnabled(true);
+                btn_Prev5PagesButton.setEnabled(true);
+
+                txtCurrentPage.setText(String.valueOf(CurrentPage));
+            }
+        });
+
+        btn_NextPageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CurrentPage = getNextPage();
+
+                if(CurrentPage == MaxPage)
+                {
+                    btn_NextPageButton.setEnabled(false);
+                    btn_Next5PagesButton.setEnabled(false);
+                }
+
+                btn_PrevPageButton.setEnabled(true);
+                btn_Prev5PagesButton.setEnabled(true);
+
+                txtCurrentPage.setText(String.valueOf(CurrentPage));
+            }
+        });
+
+
+        btn_Prev5PagesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CurrentPage = getPrev5Pages();
+
+                if (CurrentPage == 1) {
+                    btn_PrevPageButton.setEnabled(false);
+                    btn_Prev5PagesButton.setEnabled(false);
+                }
+
+                btn_NextPageButton.setEnabled(true);
+                btn_Next5PagesButton.setEnabled(true);
+
+                txtCurrentPage.setText(String.valueOf(CurrentPage));
+            }
+        });
+
+        btn_PrevPageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CurrentPage = getPreviousPage();
+
+                if(CurrentPage == 1)
+                {
+                    btn_PrevPageButton.setEnabled(false);
+                    btn_Prev5PagesButton.setEnabled(false);
+                }
+
+                btn_NextPageButton.setEnabled(true);
+                btn_Next5PagesButton.setEnabled(true);
+
+                txtCurrentPage.setText(String.valueOf(CurrentPage));
+            }
+        });
+
+
     }
 
 }
