@@ -4,18 +4,19 @@
     android:id="@+id/view_bill_item"
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="80dp"
     android:weightSum="1.0"
     >
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="0.1"
+        android:gravity="left|center_vertical"
         >
         <TextView
             android:id="@+id/txt_BillIndex"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="1.0"
             />
@@ -23,9 +24,11 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.5"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.6"
+        android:gravity="center"
+        android:orientation="vertical"
         >
         <TextView
             android:id="@+id/txt_BillName"
@@ -34,12 +37,20 @@
             android:text="Bill name"
             />
 
+        <TextView
+            android:id="@+id/txt_BillDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Short description"
+            />
+
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.4"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_weight="0.3"
         >
         <TextView
             android:id="@+id/txt_BillVote"

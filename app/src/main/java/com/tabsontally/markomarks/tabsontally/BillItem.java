@@ -7,6 +7,7 @@ public class BillItem {
 
     public String Title;
     public int Index;
+    public String Description;
     public String Id;
 
     public String Vote;
@@ -18,6 +19,7 @@ public class BillItem {
         Index = 0;
         Id="none";
         Vote = "Fail";
+        Description = "";
     }
 
 

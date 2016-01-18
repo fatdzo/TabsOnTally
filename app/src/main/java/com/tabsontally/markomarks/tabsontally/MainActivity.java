@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
                 case BillManager.PULL_SUCCESS: {
                     Log.e("TABONTALLY", "SUCCCEESS");
                     billList.clear();
-                    billList.addAll(bllManager.getBillAsAnArrayList());
+                    billList.addAll(bllManager.getBillItemList());
 
                     billAdapter.setAdapterList(billList);
 
@@ -99,30 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void InitializeControls()
     {
-
-      billsListView = (ListView)findViewById(R.id.lst_Bills);
-
-        BillItem temp = new BillItem();
-        temp.Index = 1;
-        temp.Title = "Bill name";
-        temp.Vote = "NotVoted";
-
-        billList.add(temp);
-        BillItem temp2 = new BillItem();
-        temp2.Index = 1;
-        temp2.Title = "Bill name 2";
-        temp2.Vote = "Fail";
-        billList.add(temp2);
-        billList.add(temp);
-        billList.add(temp2);
-
-        BillItem temp3 = new BillItem();
-        temp3.Index = 1;
-        temp3.Title = "Bill name 3";
-        temp3.Vote = "Pass";
-        billList.add(temp3);
-
-
+        billsListView = (ListView)findViewById(R.id.lst_Bills);
         billAdapter = new BillAdapter(context, billList);
         billsListView.setAdapter(billAdapter);
     }

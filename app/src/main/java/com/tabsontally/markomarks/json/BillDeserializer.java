@@ -2,6 +2,7 @@ package com.tabsontally.markomarks.json;
 
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
@@ -13,7 +14,11 @@ import com.tabsontally.markomarks.model.Bill;
 
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -49,7 +54,29 @@ public class BillDeserializer implements JsonDeserializer<Bill> {
         String[] subjects = getStringArray(attr.get("subject").toString());
         String[] classification = getStringArray(attr.get("classification").toString());
 
-        Bill bill = new Bill(resultId, resultType, identifier, title, "", "", classification, subjects);
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+
+        String createdAt = attr.get("created_at").toString();
+        Date createdAtDate = new Date();
+        try
+        {
+            createdAtDate = formatter.parse(createdAt);
+        }
+        catch (ParseException e){
+
+        }
+
+        String updated_at = attr.get("updated_at").toString();
+        Date updatedAtDate = new Date();
+        try
+        {
+            updatedAtDate = formatter.parse(updated_at);
+        }
+        catch (ParseException e){
+
+        }
+
+        Bill bill = new Bill(resultId, resultType, identifier, title, "", "", classification, subjects,createdAtDate, updatedAtDate);
         return bill;
     }
 

@@ -68,8 +68,12 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
         // Lookup view for data population
         TextView billIndex = (TextView) convertView.findViewById(R.id.txt_BillIndex);
         billIndex.setText(String.valueOf(bill.Index) + ". ");
+
         TextView billName = (TextView) convertView.findViewById(R.id.txt_BillName);
         billName.setText(bill.Title);
+
+        TextView  billDescription = (TextView) convertView.findViewById(R.id.txt_BillDescription);
+        billDescription.setText(bill.Description);
 
         TextView billVote = (TextView) convertView.findViewById(R.id.txt_BillVote);
         billVote.setText(bill.Vote);

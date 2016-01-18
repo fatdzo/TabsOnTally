@@ -19,6 +19,7 @@ import com.tabsontally.markomarks.model.Bill;
 import com.tabsontally.markomarks.tabsontally.BillItem;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,18 +42,23 @@ public class BillManager  extends BaseRouteManager {
 
     public ArrayList<Bill> BillList;
 
-    public ArrayList<BillItem> getBillAsAnArrayList()
+    public ArrayList<BillItem> getBillItemList()
     {
         ArrayList<BillItem> result = new ArrayList<>();
 
-        for(Bill bll: mBills.values())
+        Bill[] billList = mBills.values().toArray(new Bill[mBills.values().size()]);
+        Arrays.sort(billList);
+        int index = 1;
+        for(Bill bll: billList)
         {
             BillItem b = new BillItem();
-            b.Title = bll.getmTitle();
+            b.Title = bll.getmTitle().trim();
             b.Id = bll.getId();
+            b.Index = index;
+            b.Description = "";
             result.add(b);
+            index++;
         }
-        Log.e("BBZ", String.valueOf(result.get(0).Title));
         return result;
     }
 
@@ -106,7 +112,6 @@ public class BillManager  extends BaseRouteManager {
                             switchState(FINISHED);
                             return;
                         }
-                        Log.e("BILLSSIZE", String.valueOf(mBills.size()));
                         pullRecordStep(mCurrentPage++);
                     }
                 });
