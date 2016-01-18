@@ -73,7 +73,7 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
         billName.setText(bill.Title);
 
         TextView  billDescription = (TextView) convertView.findViewById(R.id.txt_BillDescription);
-        billDescription.setText(bill.Description);
+        billDescription.setText(bill.getDescription());
 
         TextView billVote = (TextView) convertView.findViewById(R.id.txt_BillVote);
         billVote.setText(bill.Vote);

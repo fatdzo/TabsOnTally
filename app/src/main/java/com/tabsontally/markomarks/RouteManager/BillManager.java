@@ -44,7 +44,9 @@ public class BillManager  extends BaseRouteManager {
         ArrayList<BillItem> result = new ArrayList<>();
 
         Bill[] billList = mBills.values().toArray(new Bill[mBills.values().size()]);
+
         Arrays.sort(billList);
+
         int index = 1;
         for(Bill bll: billList)
         {
@@ -53,9 +55,12 @@ public class BillManager  extends BaseRouteManager {
             b.Id = bll.getId();
             b.Index = index;
             b.Description = "";
+            b.CreatedAt = bll.getmCreated();
+            b.UpdatedAt = bll.getmUpdated();
             result.add(b);
             index++;
         }
+
         return result;
     }
 

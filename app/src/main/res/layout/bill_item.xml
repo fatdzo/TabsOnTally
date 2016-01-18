@@ -18,7 +18,7 @@
             android:id="@+id/txt_BillIndex"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="1.0"
+            android:text="1."
             />
 
     </LinearLayout>
@@ -27,7 +27,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.6"
-        android:gravity="center"
+        android:gravity="left|center_vertical"
         android:orientation="vertical"
         >
         <TextView
@@ -41,6 +41,7 @@
             android:id="@+id/txt_BillDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textStyle="italic"
             android:text="Short description"
             />
 

@@ -58,23 +58,11 @@ public class Bill extends BaseData implements Comparable<Bill>{
         return mUpdated;
     }
 
+    public Date getmCreated() {return mCreated; }
+
     public int compareTo(Bill compareBill) {
-
         Date compareUpdate = compareBill.getmUpdated();
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(compareUpdate);
-        long updateLong = cal.getTimeInMillis();
-
-        Calendar cal2 = Calendar.getInstance();
-        cal2.setTime(this.mUpdated);
-        long updateLong2 = cal2.getTimeInMillis();
-
-        //ascending order
-        return (int)(updateLong - updateLong2);
-
-        //descending order
-        //return compareQuantity - this.quantity;
-
+        return compareUpdate.compareTo(mUpdated);
     }
 
     String mBillId;
