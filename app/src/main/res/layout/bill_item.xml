@@ -12,6 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.1"
+        android:paddingLeft="5dp"
         android:gravity="left|center_vertical"
         >
         <TextView
@@ -26,7 +27,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.6"
+        android:layout_weight="0.7"
         android:gravity="left|center_vertical"
         android:orientation="vertical"
         >
@@ -35,6 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Bill name"
+            android:textStyle="bold"
             />
 
         <TextView
@@ -51,13 +53,13 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:gravity="center"
-        android:layout_weight="0.3"
+        android:layout_weight="0.2"
         >
         <TextView
             android:id="@+id/txt_BillVote"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Bill vote"
+            android:text="PASS"
             />
 
     </LinearLayout>
