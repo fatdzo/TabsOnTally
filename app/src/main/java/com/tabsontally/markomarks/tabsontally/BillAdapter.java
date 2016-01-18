@@ -23,7 +23,7 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
 
     private Context ctx;
 
-    private List<BillItem> itemz;
+    private ArrayList<BillItem> itemz;
 
     public BillAdapter(Context context, ArrayList<BillItem> items)
     {
@@ -34,10 +34,9 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
 
     }
 
-    public void SetAdapterList(ArrayList<BillItem> bills)
+    public void setAdapterList(ArrayList<BillItem> bills)
     {
-        itemz.clear();
-        itemz = bills.subList(0, 20);
+        itemz = bills;
 
         notifyDataSetChanged();
         Log.e("tag", "NUMBER OF ITEMS: " + itemz.size());

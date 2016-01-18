@@ -27,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     private BillManager bllManager;
 
+    private ListView billsListView;
+
 
     PeopleManager mPeopleManager;
 
@@ -42,7 +44,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 case BillManager.PULL_SUCCESS: {
                     Log.e("TABONTALLY", "SUCCCEESS");
-                    billList = bllManager.getBillAsAnArrayList();
+                    billList.clear();
+                    billList.addAll(bllManager.getBillAsAnArrayList());
+
+                    billAdapter.setAdapterList(billList);
 
                     billAdapter.notifyDataSetChanged();
 
@@ -95,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     private void InitializeControls()
     {
 
-      ListView billsListView = (ListView)findViewById(R.id.lst_Bills);
+      billsListView = (ListView)findViewById(R.id.lst_Bills);
 
         BillItem temp = new BillItem();
         temp.Index = 1;

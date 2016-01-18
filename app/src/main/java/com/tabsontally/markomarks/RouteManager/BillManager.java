@@ -39,22 +39,20 @@ public class BillManager  extends BaseRouteManager {
         pullAllRecords();
     }
 
-    public List<Bill> BillList;
+    public ArrayList<Bill> BillList;
 
     public ArrayList<BillItem> getBillAsAnArrayList()
     {
         ArrayList<BillItem> result = new ArrayList<>();
 
-        ArrayList<Bill> tempList = new ArrayList<Bill>(mBills.values());
-
-        for(Bill bll: tempList)
+        for(Bill bll: mBills.values())
         {
             BillItem b = new BillItem();
             b.Title = bll.getmTitle();
             b.Id = bll.getId();
             result.add(b);
         }
-        Log.e("BBZ", String.valueOf(result.size()));
+        Log.e("BBZ", String.valueOf(result.get(0).Title));
         return result;
     }
 
@@ -89,13 +87,13 @@ public class BillManager  extends BaseRouteManager {
                 .setCallback(new FutureCallback<JsonObject>() {
                     @Override
                     public void onCompleted(Exception e, JsonObject result) {
-                        if(e != null) {
+                        if (e != null) {
                             switchState(FINISHED);
                             return;
                         }
 
                         JsonArray data = result.getAsJsonArray("data");
-                        if(data == null) {
+                        if (data == null) {
                             switchState(FINISHED);
                             return;
                         }
@@ -104,8 +102,7 @@ public class BillManager  extends BaseRouteManager {
                             Bill bill = gson.fromJson(element, Bill.class);
                             mBills.put(bill.getId(), bill);
                         }
-                        if(mCurrentPage > 3)
-                        {
+                        if (mCurrentPage > 3) {
                             switchState(FINISHED);
                             return;
                         }
