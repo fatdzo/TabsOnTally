@@ -29,20 +29,7 @@ public class BillDeserializer implements JsonDeserializer<Bill> {
 
     @Override
     public Bill deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        /*
-        Gson gson = new Gson();
-        Type type = new TypeToken<Map<String, Object>>(){}.getType();
-        Map<String, Object> data = gson.fromJson(json, type);
-        String resultType = (String) data.get("type");
-        String resultId = data.get("id").toString();
-        Map<String, Object> attr = (Map<String, Object>) data.get("attributes");
 
-        String name = attr.get("name").toString();
-        String imageUrl = attr.get("image").toString();
-        Map<String,String> extra = (Map<String, String>) attr.get("extras");
-        Person person = new Person(resultId, resultType, name, "", "", imageUrl, "", "", "", "" , "", "", null, extra);
-        return person;
-         */
         Type type = new TypeToken<Map<String, Object>>(){}.getType();
         Map<String, Object> data = gson.fromJson(json, type);
         String resultType = (String) data.get("type");
@@ -90,23 +77,3 @@ public class BillDeserializer implements JsonDeserializer<Bill> {
 
     }
 }
-/*
-                "legislative_session": {
-                    "identifier": "2015",
-                    "name": "2015 Regular Session"
-                },
-                "created_at": "2015-10-28T03:21:47.683513Z",
-                "updated_at": "2015-10-28T03:21:47.683535Z",
-                "extras": {
-                    "places": []
-                },
-                "identifier": "SB 228",
-                "title": "Online Voter Application",
-                "classification": [
-                    "bill"
-                ],
-                "subject": [
-                    "appropriations",
-                    "taxation"
-                ]
- */

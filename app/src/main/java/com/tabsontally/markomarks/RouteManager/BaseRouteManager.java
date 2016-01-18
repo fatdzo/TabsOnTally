@@ -2,6 +2,7 @@ package com.tabsontally.markomarks.RouteManager;
 
 import android.content.Context;
 import android.support.annotation.IntDef;
+import android.util.Log;
 
 
 import com.tabsontally.markomarks.model.APIConfig;
@@ -34,7 +35,15 @@ public abstract class BaseRouteManager {
     }
 
     protected String getUrl(int page) {
-        return (mApiConfig.getUrl() + getRoute() + "?page=" + page);
+        String result = (mApiConfig.getUrl() + getRoute());
+        if(page > 0)
+        {
+            result = (mApiConfig.getUrl() + getRoute() + "?page=" + page);
+        }
+
+        Log.e("GETURL", result);
+        return result;
+
     }
 
     public abstract String getRoute();

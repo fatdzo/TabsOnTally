@@ -3,7 +3,6 @@ package com.tabsontally.markomarks.RouteManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,7 +11,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.tabsontally.markomarks.RouteManager.BaseRouteManager;
 import com.tabsontally.markomarks.json.BillDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
 import com.tabsontally.markomarks.model.Bill;
@@ -21,7 +19,6 @@ import com.tabsontally.markomarks.tabsontally.BillItem;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,16 +28,16 @@ public class BillManager  extends BaseRouteManager {
     public static final String PULL_SUCCESS = "com.jli.tabsapiexample.billmanager.PULL SUCCESS";
 
     Map<String, Bill> mBills;
+    //TODO: Insert meta data to get the number of pages and current page
     private static final String ROUTE = "bills/";
 
     public BillManager(Context context, APIConfig config) {
         super(context, config);
         mBills = new HashMap<>();
         switchState(IDLE);
-        pullAllRecords();
+        //pullAllRecords();
+        pullRecords(1);
     }
-
-    public ArrayList<Bill> BillList;
 
     public ArrayList<BillItem> getBillItemList()
     {
@@ -68,6 +65,12 @@ public class BillManager  extends BaseRouteManager {
         return ROUTE;
     }
 
+    protected void pullRecords(int page){
+
+        pullRecordStep(page);
+
+    }
+
     protected void pullAllRecords() {
         if(mState != IDLE){
             return;
@@ -75,7 +78,6 @@ public class BillManager  extends BaseRouteManager {
         mState = PULLING;
         mCurrentPage = 1;
         pullRecordStep(mCurrentPage++);
-        Log.d("Number of bills pulled", String.valueOf(mBills.size()));
     }
 
     private void pullRecordStep(int page) {
@@ -108,11 +110,15 @@ public class BillManager  extends BaseRouteManager {
                             Bill bill = gson.fromJson(element, Bill.class);
                             mBills.put(bill.getId(), bill);
                         }
-                        if (mCurrentPage > 3) {
-                            switchState(FINISHED);
-                            return;
-                        }
-                        pullRecordStep(mCurrentPage++);
+                        //if (mCurrentPage > 3) {
+                        //    switchState(FINISHED);
+                        //    return;
+                        //}
+                        //Recursive, pulls out all the data, we need a specific page
+                        //pullRecordStep(mCurrentPage++);
+                        mCurrentPage += 1;
+                        switchState(FINISHED);
+                        return;
                     }
                 });
     }
