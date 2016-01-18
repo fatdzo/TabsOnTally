@@ -17,8 +17,6 @@ import com.tabsontally.markomarks.RouteManager.BillManager;
 import com.tabsontally.markomarks.RouteManager.PeopleManager;
 import com.tabsontally.markomarks.model.APIConfig;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -146,6 +144,8 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction(BillManager.PULL_SUCCESS);
         broadcastManager.registerReceiver(mBroadcastReceiver, filter);
 
+
+
         bllManager = new BillManager(context, tabsApi);
 
 
@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 CurrentPage = get5NextPages();
-
+                bllManager.pullRecordPage(CurrentPage);
                 if (CurrentPage == MaxPage) {
                     btn_NextPageButton.setEnabled(false);
                     btn_Next5PagesButton.setEnabled(false);
@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 CurrentPage = getNextPage();
+                bllManager.pullRecordPage(CurrentPage);
 
                 if(CurrentPage == MaxPage)
                 {
@@ -210,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 CurrentPage = getPrev5Pages();
-
+                bllManager.pullRecordPage(CurrentPage);
                 if (CurrentPage == 1) {
                     btn_PrevPageButton.setEnabled(false);
                     btn_Prev5PagesButton.setEnabled(false);
@@ -227,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 CurrentPage = getPreviousPage();
-
+                bllManager.pullRecordPage(CurrentPage);
                 if(CurrentPage == 1)
                 {
                     btn_PrevPageButton.setEnabled(false);

@@ -11,7 +11,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.1"
+        android:layout_weight="0.15"
         android:paddingLeft="5dp"
         android:gravity="left|center_vertical"
         >
@@ -27,7 +27,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="0.7"
+        android:layout_weight="0.65"
         android:gravity="left|center_vertical"
         android:orientation="vertical"
         >

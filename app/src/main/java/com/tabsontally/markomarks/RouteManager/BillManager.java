@@ -26,6 +26,7 @@ import java.util.Map;
  */
 public class BillManager  extends BaseRouteManager {
     public static final String PULL_SUCCESS = "com.jli.tabsapiexample.billmanager.PULL SUCCESS";
+    public static final int PAGE_SIZE = 50;
 
     Map<String, Bill> mBills;
     //TODO: Insert meta data to get the number of pages and current page
@@ -53,7 +54,7 @@ public class BillManager  extends BaseRouteManager {
             BillItem b = new BillItem();
             b.Title = bll.getmTitle().trim();
             b.Id = bll.getId();
-            b.Index = index;
+            b.Index = (mCurrentPage - 1) * PAGE_SIZE + index;
             b.Description = "";
             b.CreatedAt = bll.getmCreated();
             b.UpdatedAt = bll.getmUpdated();
@@ -83,6 +84,12 @@ public class BillManager  extends BaseRouteManager {
         mState = PULLING;
         mCurrentPage = 1;
         pullRecordStep(mCurrentPage++);
+    }
+
+    public void pullRecordPage(int page){
+        mBills.clear();
+        mCurrentPage = page;
+        pullRecordStep(page);
     }
 
     private void pullRecordStep(int page) {
@@ -121,7 +128,7 @@ public class BillManager  extends BaseRouteManager {
                         //}
                         //Recursive, pulls out all the data, we need a specific page
                         //pullRecordStep(mCurrentPage++);
-                        mCurrentPage += 1;
+                        //mCurrentPage += 1;
                         switchState(FINISHED);
                         return;
                     }
