@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,21 +16,30 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.tabsontally.markomarks.RouteManager.BillManager;
 import com.tabsontally.markomarks.RouteManager.PeopleManager;
 import com.tabsontally.markomarks.model.APIConfig;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
 
     private Utilities utilities = new Utilities();
     private Context context;
     private BillAdapter billAdapter;
 
+    GoogleApiClient mGoogleApiClient;
+
     private ArrayList<BillItem> billList = new ArrayList<>();
+    private ArrayList<PersonItem> personList = new ArrayList<PersonItem>();
+
+    private APIConfig tabsApi;
 
     private BillManager bllManager;
+    private PeopleManager pplManager;
 
     private ListView billsListView;
 
@@ -42,6 +54,32 @@ public class MainActivity extends AppCompatActivity {
     private Button btn_Prev5PagesButton;
     private Button btn_Next5PagesButton;
 
+    private Location userLocation;
+
+    BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            switch (action) {
+                case PeopleManager.PULL_SUCCESS: {
+                    personList.clear();
+                    personList.addAll(pplManager.getPersonItemList());
+
+
+                    break;
+                }
+                case BillManager.PULL_SUCCESS: {
+                    billList.clear();
+                    billList.addAll(bllManager.getBillItemList());
+
+                    billAdapter.setAdapterList(billList);
+                    MaxPage = bllManager.getmMeta().Pages;
+                    CurrentPage = bllManager.getmMeta().Page;
+                    break;
+                }
+            }
+        }
+    };
 
     private int get5NextPages()
     {
@@ -86,32 +124,6 @@ public class MainActivity extends AppCompatActivity {
         return MinPage;
     }
 
-
-    PeopleManager mPeopleManager;
-
-    BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            switch (action) {
-                case PeopleManager.PULL_SUCCESS: {
-
-
-                    break;
-                }
-                case BillManager.PULL_SUCCESS: {
-                    billList.clear();
-                    billList.addAll(bllManager.getBillItemList());
-
-                    billAdapter.setAdapterList(billList);
-                    MaxPage = bllManager.getmMeta().Pages;
-                    CurrentPage = bllManager.getmMeta().Page;
-                    break;
-                }
-            }
-        }
-    };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,10 +132,7 @@ public class MainActivity extends AppCompatActivity {
 
         InitializeControls();
 
-        Log.e("TAGSFORTALLY", "TEST");
-
-
-        APIConfig tabsApi = new APIConfig() {
+        tabsApi = new APIConfig() {
             @Override
             public String getUrl() {
                 return "https://tabsontallahassee.com/api/";
@@ -146,11 +155,28 @@ public class MainActivity extends AppCompatActivity {
         filter.addAction(BillManager.PULL_SUCCESS);
         broadcastManager.registerReceiver(mBroadcastReceiver, filter);
 
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
 
 
         bllManager = new BillManager(context, tabsApi);
 
 
+    }
+
+    @Override
+    protected void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
     }
 
     private void InitializeControls()
@@ -243,8 +269,22 @@ public class MainActivity extends AppCompatActivity {
                 txtCurrentPage.setText(String.valueOf(CurrentPage));
             }
         });
+    }
 
+    @Override
+    public void onConnected(Bundle bundle) {
+        userLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        pplManager = new PeopleManager(context, tabsApi, userLocation.getLatitude(), userLocation.getLongitude());
 
     }
 
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
 }

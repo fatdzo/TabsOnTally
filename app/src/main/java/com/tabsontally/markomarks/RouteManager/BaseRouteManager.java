@@ -28,17 +28,37 @@ public abstract class BaseRouteManager {
     protected  @STATE int mState;
 
     protected int mCurrentPage = 1; //page starts at 1
+    protected boolean mUsePaging = true;
 
     public BaseRouteManager(Context context, APIConfig config) {
         mContext = context;
         mApiConfig = config;
     }
 
-    protected String getUrl(int page) {
-        String result = (mApiConfig.getUrl() + getRoute());
-        if(page > 0)
+    protected String getUrl(int page, boolean usePaging) {
+        mUsePaging = usePaging;
+        String routeParams = getRouteParameters();
+
+        String result = mApiConfig.getUrl() + getRoute();
+
+        if(routeParams.length() > 0 || usePaging)
         {
-            result = (mApiConfig.getUrl() + getRoute() + "?page=" + page);
+            result += "?";
+        }
+
+        if(routeParams.length() > 0)
+        {
+            result += routeParams;
+            if(usePaging)
+            {
+                result += "&";
+            }
+
+        }
+
+        if(usePaging)
+        {
+            result += "page=" + page;
         }
 
         Log.e("GETURL", result);
@@ -47,6 +67,8 @@ public abstract class BaseRouteManager {
     }
 
     public abstract String getRoute();
+
+    public abstract String getRouteParameters();
 
     protected abstract void switchState(@STATE int newState);
 }

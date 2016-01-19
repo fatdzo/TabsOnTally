@@ -16,7 +16,9 @@ import com.tabsontally.markomarks.RouteManager.BaseRouteManager;
 import com.tabsontally.markomarks.json.PersonDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
 import com.tabsontally.markomarks.model.Person;
+import com.tabsontally.markomarks.tabsontally.PersonItem;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,19 +26,71 @@ public class PeopleManager extends BaseRouteManager {
     public static final String PULL_SUCCESS = "com.jli.tabsapiexample.peoplemanager.PULL SUCCESS";
 
     Map<String, Person> mPeople;
+
+    private double mLatitude = 0;
+    private double mLongitude = 0;
+
     private static final String ROUTE = "people/";
 
-    public PeopleManager(Context context, APIConfig config) {
+
+    public PeopleManager(Context context, APIConfig config, double latitude, double longitude) {
         super(context, config);
         mPeople = new HashMap<>();
         switchState(IDLE);
-        pullAllRecords();
+        mLatitude = latitude;
+        mLongitude = longitude;
+        //pullAllRecords();
+        mUsePaging = false;
+        pullRecordStep(mCurrentPage);
     }
+
+    public void setLatitudeLongitude(double latitude, double longitude)
+    {
+        mLatitude = latitude;
+        mLongitude = longitude;
+    }
+
+
 
     @Override
     public String getRoute() {
+
         return ROUTE;
     }
+
+    @Override
+    public String getRouteParameters(){
+        String result = "";
+
+        if(mLatitude != 0 && mLongitude != 0)
+        {
+            result += "latitude=" + String.valueOf(Math.round(mLatitude * 100.0) / 100.0) + "&longitude=" + String.valueOf(Math.round(mLongitude * 100.0) / 100.0);
+        }
+        return result;
+    }
+
+    public ArrayList<PersonItem> getPersonItemList()
+    {
+        Person[] persons = mPeople.values().toArray(new Person[mPeople.values().size()]);
+        ArrayList<PersonItem> result = new ArrayList<>();
+        int index = 1;
+        for(Person per: persons)
+        {
+            PersonItem temp = new PersonItem();
+            temp.FullName = per.getmName();
+            temp.Id = per.getId();
+            temp.Index = index;
+            result.add(temp);
+            index+=1;
+
+        }
+        return result;
+    }
+
+    protected void pullRecords(int page){
+        pullRecordStep(page);
+    }
+
 
     protected void pullAllRecords() {
         if(mState != IDLE){
@@ -44,7 +98,7 @@ public class PeopleManager extends BaseRouteManager {
         }
         mState = PULLING;
         mCurrentPage = 1;
-        pullRecordStep(mCurrentPage++);
+        pullRecordStep(mCurrentPage);
     }
 
     private void pullRecordStep(int page) {
@@ -56,7 +110,7 @@ public class PeopleManager extends BaseRouteManager {
         final Gson gson = gsonBuilder.create();
 
         Ion.with(mContext)
-                .load(getUrl(page))
+                .load(getUrl(page, mUsePaging))
                 .addHeader(mApiConfig.getApiKeyHeader(), mApiConfig.getApiKey())
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
@@ -76,8 +130,9 @@ public class PeopleManager extends BaseRouteManager {
                         for (JsonElement element : data) {
                             Person person = gson.fromJson(element, Person.class);
                             mPeople.put(person.getId(), person);
+                            Log.e("PERSONFOUND", person.getmName());
                         }
-                        pullRecordStep(mCurrentPage++);
+                        //pullRecordStep(mCurrentPage++);
                     }
                 });
     }

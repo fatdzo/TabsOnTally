@@ -33,15 +33,15 @@ public class BillManager  extends BaseRouteManager {
     Meta mMeta = new Meta(1,1,0);
 
     Map<String, Bill> mBills;
-    //TODO: Insert meta data to get the number of pages and current page
     private static final String ROUTE = "bills/";
+    private static final String ROUTEPARAMETERS = "";
 
     public BillManager(Context context, APIConfig config) {
         super(context, config);
         mBills = new HashMap<>();
         switchState(IDLE);
         //pullAllRecords();
-        pullRecords(1);
+        pullRecords(mCurrentPage);
     }
 
     public ArrayList<BillItem> getBillItemList()
@@ -75,6 +75,11 @@ public class BillManager  extends BaseRouteManager {
         return ROUTE;
     }
 
+    @Override
+    public String getRouteParameters(){
+        return ROUTEPARAMETERS;
+    }
+
     protected void pullRecords(int page){
 
         pullRecordStep(page);
@@ -106,7 +111,7 @@ public class BillManager  extends BaseRouteManager {
         final Gson gson = gsonBuilder.create();
 
         Ion.with(mContext)
-                .load(getUrl(page))
+                .load(getUrl(page, mUsePaging))
                 .addHeader(mApiConfig.getApiKeyHeader(), mApiConfig.getApiKey())
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
