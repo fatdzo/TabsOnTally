@@ -12,7 +12,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.tabsontally.markomarks.RouteManager.BaseRouteManager;
 import com.tabsontally.markomarks.json.PersonDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
 import com.tabsontally.markomarks.model.Person;
@@ -39,18 +38,9 @@ public class PeopleManager extends BaseRouteManager {
         switchState(IDLE);
         mLatitude = latitude;
         mLongitude = longitude;
-        //pullAllRecords();
         mUsePaging = false;
         pullRecordStep(mCurrentPage);
     }
-
-    public void setLatitudeLongitude(double latitude, double longitude)
-    {
-        mLatitude = latitude;
-        mLongitude = longitude;
-    }
-
-
 
     @Override
     public String getRoute() {
@@ -86,11 +76,6 @@ public class PeopleManager extends BaseRouteManager {
         }
         return result;
     }
-
-    protected void pullRecords(int page){
-        pullRecordStep(page);
-    }
-
 
     protected void pullAllRecords() {
         if(mState != IDLE){

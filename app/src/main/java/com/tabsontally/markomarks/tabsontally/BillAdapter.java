@@ -31,19 +31,13 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
         ctx = context;
 
         itemz = items;
-
     }
 
     public void setAdapterList(ArrayList<BillItem> bills)
     {
         itemz = bills;
-
         notifyDataSetChanged();
-        Log.e("tag", "NUMBER OF ITEMS: " + itemz.size());
-
     }
-
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

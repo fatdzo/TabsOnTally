@@ -61,7 +61,6 @@ public abstract class BaseRouteManager {
             result += "page=" + page;
         }
 
-        Log.e("GETURL", result);
         return result;
 
     }

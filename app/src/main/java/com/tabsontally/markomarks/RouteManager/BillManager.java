@@ -40,7 +40,6 @@ public class BillManager  extends BaseRouteManager {
         super(context, config);
         mBills = new HashMap<>();
         switchState(IDLE);
-        //pullAllRecords();
         pullRecords(mCurrentPage);
     }
 
