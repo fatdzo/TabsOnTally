@@ -12,8 +12,10 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.tabsontally.markomarks.json.BillDeserializer;
+import com.tabsontally.markomarks.json.MetaDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
 import com.tabsontally.markomarks.model.Bill;
+import com.tabsontally.markomarks.model.Meta;
 import com.tabsontally.markomarks.tabsontally.BillItem;
 
 import java.util.ArrayList;
@@ -27,6 +29,8 @@ import java.util.Map;
 public class BillManager  extends BaseRouteManager {
     public static final String PULL_SUCCESS = "com.jli.tabsapiexample.billmanager.PULL SUCCESS";
     public static final int PAGE_SIZE = 50;
+
+    Meta mMeta = new Meta(1,1,0);
 
     Map<String, Bill> mBills;
     //TODO: Insert meta data to get the number of pages and current page
@@ -98,6 +102,7 @@ public class BillManager  extends BaseRouteManager {
 
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(Bill.class, new BillDeserializer());
+        gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
         final Gson gson = gsonBuilder.create();
 
         Ion.with(mContext)
@@ -113,6 +118,9 @@ public class BillManager  extends BaseRouteManager {
                         }
 
                         JsonArray data = result.getAsJsonArray("data");
+                        JsonObject meta = result.getAsJsonObject("meta");
+                        Meta metaObject = gson.fromJson(meta, Meta.class);
+                        mMeta = metaObject;
                         if (data == null) {
                             switchState(FINISHED);
                             return;
@@ -156,5 +164,11 @@ public class BillManager  extends BaseRouteManager {
         return mBills.get(id);
     }
     public int getCount() { return mBills.size(); }
+
+    public Meta getmMeta()
+    {
+        return mMeta;
+    }
+
 
 }

@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtCurrentPage;
 
     private int CurrentPage = 1;
-    private int MaxPage = 71;
+    private int MaxPage = 1;
     private int MinPage = 1;
 
     private Button btn_PrevPageButton;
@@ -104,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
                     billList.addAll(bllManager.getBillItemList());
 
                     billAdapter.setAdapterList(billList);
+                    MaxPage = bllManager.getmMeta().Pages;
+                    CurrentPage = bllManager.getmMeta().Page;
                     break;
                 }
             }
