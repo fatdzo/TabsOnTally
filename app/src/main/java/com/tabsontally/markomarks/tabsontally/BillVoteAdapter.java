@@ -20,6 +20,8 @@ import java.util.ArrayList;
 public class BillVoteAdapter extends ArrayAdapter<BillVoteItem> {
 
     private Context ctx;
+    private LegislatorVoteAdapter legVoteAdapter;
+    private ListView legVotesListView;
 
     public BillVoteAdapter(Context context, ArrayList<BillVoteItem> items)
     {
@@ -44,8 +46,11 @@ public class BillVoteAdapter extends ArrayAdapter<BillVoteItem> {
         TextView billName = (TextView) convertView.findViewById(R.id.txt_BillDetailVoteName);
         billName.setText(bill.FullName);
 
-        TextView billVote = (TextView) convertView.findViewById(R.id.txt_BillDetailVoteVote);
-        billVote.setText(bill.Vote);
+        legVoteAdapter = new LegislatorVoteAdapter(ctx, bill.Votes);
+
+        legVotesListView = (ListView) convertView.findViewById(R.id.lst_legVotes);
+        legVotesListView.setAdapter(legVoteAdapter);
+
         return convertView;
     }
 

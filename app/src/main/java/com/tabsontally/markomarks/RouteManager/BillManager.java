@@ -34,7 +34,6 @@ public class BillManager  extends BaseRouteManager {
 
     Map<String, Bill> mBills;
     private static final String ROUTE = "bills/";
-    private static final String ROUTEPARAMETERS = "";
 
     public BillManager(Context context, APIConfig config) {
         super(context, config);
@@ -74,11 +73,6 @@ public class BillManager  extends BaseRouteManager {
         return ROUTE;
     }
 
-    @Override
-    public String getRouteParameters(){
-        return ROUTEPARAMETERS;
-    }
-
     protected void pullRecords(int page){
 
         pullRecordStep(page);
@@ -96,6 +90,7 @@ public class BillManager  extends BaseRouteManager {
 
     public void pullRecordPage(int page){
         mBills.clear();
+        switchState(FINISHED);
         mCurrentPage = page;
         pullRecordStep(page);
     }
@@ -123,8 +118,8 @@ public class BillManager  extends BaseRouteManager {
 
                         JsonArray data = result.getAsJsonArray("data");
                         JsonObject meta = result.getAsJsonObject("meta");
-                        Meta metaObject = gson.fromJson(meta, Meta.class);
-                        mMeta = metaObject;
+
+                        mMeta = gson.fromJson(meta, Meta.class);
                         if (data == null) {
                             switchState(FINISHED);
                             return;
@@ -134,13 +129,7 @@ public class BillManager  extends BaseRouteManager {
                             Bill bill = gson.fromJson(element, Bill.class);
                             mBills.put(bill.getId(), bill);
                         }
-                        //if (mCurrentPage > 3) {
-                        //    switchState(FINISHED);
-                        //    return;
-                        //}
-                        //Recursive, pulls out all the data, we need a specific page
-                        //pullRecordStep(mCurrentPage++);
-                        //mCurrentPage += 1;
+
                         switchState(FINISHED);
                         return;
                     }

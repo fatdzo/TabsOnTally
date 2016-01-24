@@ -32,13 +32,18 @@ public class PeopleManager extends BaseRouteManager {
     private static final String ROUTE = "people/";
 
 
-    public PeopleManager(Context context, APIConfig config, double latitude, double longitude) {
+    public PeopleManager(Context context, APIConfig config) {
         super(context, config);
         mPeople = new HashMap<>();
-        switchState(IDLE);
+        mUsePaging = false;
+    }
+
+    public void pullPeopleFromLatLong(double latitude, double longitude)
+    {
         mLatitude = latitude;
         mLongitude = longitude;
-        mUsePaging = false;
+
+        switchState(IDLE);
         pullRecordStep(mCurrentPage);
     }
 
@@ -48,7 +53,6 @@ public class PeopleManager extends BaseRouteManager {
         return ROUTE;
     }
 
-    @Override
     public String getRouteParameters(){
         String result = "";
 
@@ -74,6 +78,7 @@ public class PeopleManager extends BaseRouteManager {
             index+=1;
 
         }
+        Log.e("TABSONTALLY", "Persons: " + String.valueOf(result.size()));
         return result;
     }
 
@@ -94,6 +99,7 @@ public class PeopleManager extends BaseRouteManager {
         gsonBuilder.registerTypeAdapter(Person.class, new PersonDeserializer());
         final Gson gson = gsonBuilder.create();
 
+        this.setRouteParameters(getRouteParameters());
         Ion.with(mContext)
                 .load(getUrl(page, mUsePaging))
                 .addHeader(mApiConfig.getApiKeyHeader(), mApiConfig.getApiKey())
@@ -115,9 +121,9 @@ public class PeopleManager extends BaseRouteManager {
                         for (JsonElement element : data) {
                             Person person = gson.fromJson(element, Person.class);
                             mPeople.put(person.getId(), person);
-                            Log.e("PERSONFOUND", person.getmName());
                         }
-                        //pullRecordStep(mCurrentPage++);
+                        switchState(FINISHED);
+                        return;
                     }
                 });
     }
@@ -138,9 +144,4 @@ public class PeopleManager extends BaseRouteManager {
                 break;
         }
     }
-
-    public Person getPersonWithId(String id) {
-        return mPeople.get(id);
-    }
-    public int getCount() { return mPeople.size(); }
 }

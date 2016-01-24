@@ -8,6 +8,7 @@ import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -18,6 +19,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.tabsontally.markomarks.RouteManager.BillManager;
 import com.tabsontally.markomarks.RouteManager.PeopleManager;
+import com.tabsontally.markomarks.RouteManager.VoteManager;
 import com.tabsontally.markomarks.model.APIConfig;
 
 import java.util.ArrayList;
@@ -31,11 +33,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private ArrayList<BillItem> billList = new ArrayList<>();
     private ArrayList<PersonItem> personList = new ArrayList<>();
+    private ArrayList<VoteItem> voteItemsList = new ArrayList<>();
 
     private APIConfig tabsApi;
 
     private BillManager bllManager;
     private PeopleManager pplManager;
+    private VoteManager vtManager;
 
     private ListView billsListView;
 
@@ -57,20 +61,75 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             switch (action) {
+                case VoteManager.PULL_SUCCESS:{
+                    ArrayList<VoteItem> vItems = vtManager.getVoteItems();
+                    if(vItems.size() > 0)
+                    {
+                        voteItemsList.addAll(vItems);
+
+                        for(int i=0; i < billList.size(); i++)
+                        {
+                            billList.get(i).Votes.clear();
+                            for(VoteItem v: vItems)
+                            {
+                                if(billList.get(i).Id.equals(v.BillId))
+                                {
+                                    VoteItem temp = new VoteItem();
+                                    temp.Result = v.Result;
+                                    temp.Id = v.Id;
+                                    temp.BillId = v.BillId;
+                                    temp.PersonId = v.PersonId;
+                                    billList.get(i).Votes.add(temp);
+                                }
+                            }
+
+                        }
+
+                        billAdapter.notifyDataSetChanged();
+
+                    }
+
+                    break;
+                }
                 case PeopleManager.PULL_SUCCESS: {
                     personList.clear();
                     personList.addAll(pplManager.getPersonItemList());
+
+                    voteItemsList.clear();
+
+                    vtManager.clearData();
+                    for(BillItem b: billList) {
+
+                        for (PersonItem p : personList) {
+                            vtManager.pullRecords(b.Id, p.Id);
+                        }
+                    }
 
 
                     break;
                 }
                 case BillManager.PULL_SUCCESS: {
+                    voteItemsList.clear();
                     billList.clear();
                     billList.addAll(bllManager.getBillItemList());
 
+                    billsListView.smoothScrollToPosition(0);
                     billAdapter.setAdapterList(billList);
-                    MaxPage = bllManager.getmMeta().Pages;
-                    CurrentPage = bllManager.getmMeta().Page;
+                    if(bllManager.getmMeta()!=null)
+                    {
+                        MaxPage = bllManager.getmMeta().Pages;
+                        CurrentPage = bllManager.getmMeta().Page;
+                    }
+
+
+                    vtManager = new VoteManager(context, tabsApi);
+
+                    for(BillItem b: billList) {
+                        for (PersonItem p : personList) {
+                            vtManager.pullRecords(b.Id, p.Id);
+                        }
+                    }
+
                     break;
                 }
             }
@@ -149,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         IntentFilter filter = new IntentFilter();
         filter.addAction(PeopleManager.PULL_SUCCESS);
         filter.addAction(BillManager.PULL_SUCCESS);
+        filter.addAction(VoteManager.PULL_SUCCESS);
         broadcastManager.registerReceiver(mBroadcastReceiver, filter);
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -157,10 +217,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addApi(LocationServices.API)
                 .build();
 
-
         bllManager = new BillManager(context, tabsApi);
 
+        vtManager = new VoteManager(context, tabsApi);
 
+        pplManager = new PeopleManager(context, tabsApi);
     }
 
     @Override
@@ -197,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         btn_Next5PagesButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 CurrentPage = get5NextPages();
                 bllManager.pullRecordPage(CurrentPage);
                 if (CurrentPage == MaxPage) {
@@ -270,7 +332,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onConnected(Bundle bundle) {
         userLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        pplManager = new PeopleManager(context, tabsApi, userLocation.getLatitude(), userLocation.getLongitude());
+
+        if(userLocation!=null)
+        {
+            pplManager.pullPeopleFromLatLong(userLocation.getLatitude(), userLocation.getLongitude());
+            voteItemsList.clear();
+        }
     }
 
     @Override

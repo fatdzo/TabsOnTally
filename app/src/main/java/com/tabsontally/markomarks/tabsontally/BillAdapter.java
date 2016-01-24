@@ -2,7 +2,6 @@ package com.tabsontally.markomarks.tabsontally;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by MarkoPhillipMarkovic on 1/16/2016.
@@ -24,6 +20,10 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
     private Context ctx;
 
     private ArrayList<BillItem> itemz;
+    private ListView legVotesListview;
+    private LegislatorVoteAdapter legVotesAdapter;
+
+    private LinearLayout billView;
 
     public BillAdapter(Context context, ArrayList<BillItem> items)
     {
@@ -48,7 +48,9 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.bill_item, parent, false);
         }
 
-        LinearLayout billView = (LinearLayout) convertView.findViewById(R.id.view_bill_item);
+
+
+        billView = (LinearLayout) convertView.findViewById(R.id.view_bill_item);
         billView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,8 +71,11 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
         TextView  billDescription = (TextView) convertView.findViewById(R.id.txt_BillDescription);
         billDescription.setText(bill.getDescription());
 
-        TextView billVote = (TextView) convertView.findViewById(R.id.txt_BillVote);
-        billVote.setText(bill.Vote);
+        legVotesAdapter = new LegislatorVoteAdapter(ctx, bill.Votes);
+
+        legVotesListview = (ListView)convertView.findViewById(R.id.lst_legVotes);
+        legVotesListview.setAdapter(legVotesAdapter);
+
         return convertView;
     }
 

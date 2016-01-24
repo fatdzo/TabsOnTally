@@ -1,7 +1,9 @@
 package com.tabsontally.markomarks.tabsontally;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by MarkoPhillipMarkovic on 1/16/2016.
@@ -13,7 +15,7 @@ public class BillItem {
     public String Description;
     public String Id;
 
-    public String Vote;
+    public ArrayList<VoteItem> Votes;
     public Date CreatedAt;
     public Date UpdatedAt;
 
@@ -23,7 +25,7 @@ public class BillItem {
         Title = "";
         Index = 0;
         Id="none";
-        Vote = "Fail";
+        Votes = new ArrayList<>();
         Description = "";
         CreatedAt = new Date();
         UpdatedAt = new Date();

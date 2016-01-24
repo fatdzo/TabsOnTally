@@ -8,6 +8,27 @@ public class VoteItem {
     public String Id;
     public String Name;
     public String Description;
+    public String Result;
+    public String BillId;
+    public String PersonId;
+
+    public int getResultValue()
+    {
+        int resValue = 0;
+        String res = Result.trim();
+        if(res.equals("fail"))
+        {
+            resValue = -1;
+        }
+
+        if(res.equals("pass"))
+        {
+            resValue = 1;
+        }
+
+        return resValue;
+    }
+
 
     public VoteItem()
     {
@@ -15,6 +36,10 @@ public class VoteItem {
         Name = "";
         Description = "";
         Index = 0;
+        Result = "";
+
+        BillId = "";
+        PersonId = "";
     }
 
 

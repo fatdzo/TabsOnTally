@@ -1,5 +1,7 @@
 package com.tabsontally.markomarks.tabsontally;
 
+import java.util.ArrayList;
+
 /**
  * Created by MarkoPhillipMarkovic on 1/16/2016.
  */
@@ -10,7 +12,7 @@ public class BillVoteItem {
     public String FullName;
     public int Index;
     public String Id;
-    public String Vote;
+    public ArrayList<VoteItem> Votes;
 
     public BillVoteItem()
     {
@@ -18,8 +20,8 @@ public class BillVoteItem {
         LastName = "LastName";
         FullName = LastName + "," + FirstName;
         Index = 0;
-        Id = "dfakjhsdfoiuwe";
-        Vote = "Not voted";
+        Id = "none";
+        Votes = new ArrayList<>();
 
     }
 

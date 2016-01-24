@@ -9,6 +9,7 @@ import com.tabsontally.markomarks.model.APIConfig;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.HashMap;
 
 /**
  * Created by johnli on 1/16/16.
@@ -30,6 +31,10 @@ public abstract class BaseRouteManager {
     protected int mCurrentPage = 1; //page starts at 1
     protected boolean mUsePaging = true;
 
+    private String mRouteParameters = "";
+
+    protected HashMap<String, String> mUsedUrls;
+
     public BaseRouteManager(Context context, APIConfig config) {
         mContext = context;
         mApiConfig = config;
@@ -37,23 +42,21 @@ public abstract class BaseRouteManager {
 
     protected String getUrl(int page, boolean usePaging) {
         mUsePaging = usePaging;
-        String routeParams = getRouteParameters();
 
         String result = mApiConfig.getUrl() + getRoute();
 
-        if(routeParams.length() > 0 || usePaging)
+        if(mRouteParameters.length() > 0 || usePaging)
         {
             result += "?";
         }
 
-        if(routeParams.length() > 0)
+        if(mRouteParameters.length() > 0)
         {
-            result += routeParams;
+            result += mRouteParameters;
             if(usePaging)
             {
                 result += "&";
             }
-
         }
 
         if(usePaging)
@@ -61,13 +64,24 @@ public abstract class BaseRouteManager {
             result += "page=" + page;
         }
 
+        Log.e("TABSONTALLY", result);
+
         return result;
 
     }
 
     public abstract String getRoute();
 
-    public abstract String getRouteParameters();
+    public void clearData()
+    {
+        mUsedUrls.clear();
+    }
+
+    /*The string should look something like "bill=12345&voter=12345" the getUrl() will handle the rest. Every derived class handles their own set of parameters so it seemed appropriate*/
+    protected void setRouteParameters(String parameters)
+    {
+        mRouteParameters = parameters;
+    }
 
     protected abstract void switchState(@STATE int newState);
 }
