@@ -39,15 +39,15 @@ public class LegislatorVoteAdapter extends ArrayAdapter<VoteItem> {
 
         // Lookup view for data population
         TextView voteResult = (TextView) convertView.findViewById(R.id.txt_legislatorVoteResult);
-        if(vote.Result.equals("pass"))
+        if(vote.PersonVoted)
         {
             lin_LegVote.setBackgroundColor(Color.GREEN);
         }
-        if(vote.Result.equals("fail"))
+        else
         {
             lin_LegVote.setBackgroundColor(Color.RED);
         }
-        voteResult.setText(String.valueOf(vote.Result));
+        voteResult.setText(String.valueOf(vote.getPersonVotedString()));
 
         return convertView;
     }

@@ -34,9 +34,22 @@ public class BillManager  extends BaseRouteManager {
 
     Map<String, Bill> mBills;
     private static final String ROUTE = "bills/";
+    private final Gson mGson;
+
+    private Context ctx;
 
     public BillManager(Context context, APIConfig config) {
         super(context, config);
+
+        ctx = context;
+
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Bill.class, new BillDeserializer());
+        gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
+        final Gson gson = gsonBuilder.create();
+
+        mGson = gson;
+
         mBills = new HashMap<>();
         switchState(IDLE);
         pullRecords(mCurrentPage);
@@ -99,13 +112,9 @@ public class BillManager  extends BaseRouteManager {
         if(page == 0)
             return;
 
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Bill.class, new BillDeserializer());
-        gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
-        final Gson gson = gsonBuilder.create();
-
         Ion.with(mContext)
                 .load(getUrl(page, mUsePaging))
+                .noCache()
                 .addHeader(mApiConfig.getApiKeyHeader(), mApiConfig.getApiKey())
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
@@ -119,14 +128,14 @@ public class BillManager  extends BaseRouteManager {
                         JsonArray data = result.getAsJsonArray("data");
                         JsonObject meta = result.getAsJsonObject("meta");
 
-                        mMeta = gson.fromJson(meta, Meta.class);
+                        mMeta = mGson.fromJson(meta, Meta.class);
                         if (data == null) {
                             switchState(FINISHED);
                             return;
                         }
 
                         for (JsonElement element : data) {
-                            Bill bill = gson.fromJson(element, Bill.class);
+                            Bill bill = mGson.fromJson(element, Bill.class);
                             mBills.put(bill.getId(), bill);
                         }
 

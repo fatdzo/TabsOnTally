@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_weight="1.0"
     >
     
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:gravity="center"
         android:layout_weight="0.1"
         >
         <TextView
-            android:id="@+id/txt_BillDetailVoteIndex"
+            android:id="@+id/txt_BillDetailVoterIndex"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="1."
@@ -20,13 +21,13 @@
 
     </LinearLayout>
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:gravity="center"
         android:layout_weight="0.5"
         >
         <TextView
-            android:id="@+id/txt_BillDetailVoteName"
+            android:id="@+id/txt_BillDetailVoterName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Lastname, Name"
@@ -35,17 +36,17 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/lin_BillDetailVoterVoteLayout"
+        android:layout_width="0dp"
         android:layout_height="50dp"
         android:gravity="center"
-        android:layout_weight="0.1"
-        android:paddingRight="10dp"
+        android:layout_weight="0.15"
         >
         <TextView
-            android:id="@+id/txt_BillDetailVoteVote"
+            android:id="@+id/txt_BillDetailVoterVote"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right"
+            android:gravity="center"
             android:text="Vote"
             />
 
@@ -54,9 +55,9 @@
 
     </LinearLayout>
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="0.3"
+        android:layout_weight="0.35"
         android:gravity="center"
         >
         <Button

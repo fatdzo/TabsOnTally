@@ -17,10 +17,15 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.koushikdutta.ion.Ion;
 import com.tabsontally.markomarks.RouteManager.BillManager;
 import com.tabsontally.markomarks.RouteManager.PeopleManager;
 import com.tabsontally.markomarks.RouteManager.VoteManager;
+import com.tabsontally.markomarks.json.VoteDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
+import com.tabsontally.markomarks.model.Vote;
 
 import java.util.ArrayList;
 
@@ -39,7 +44,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private BillManager bllManager;
     private PeopleManager pplManager;
-    private VoteManager vtManager;
+    //private VoteManager vtManager;
+    private ArrayList<VoteManager> vtManagerList = new ArrayList<>();
 
     private ListView billsListView;
 
@@ -56,39 +62,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private Location userLocation;
 
+    LocalBroadcastManager broadcastManager;
+
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             switch (action) {
                 case VoteManager.PULL_SUCCESS:{
-                    ArrayList<VoteItem> vItems = vtManager.getVoteItems();
-                    if(vItems.size() > 0)
-                    {
-                        voteItemsList.addAll(vItems);
-
-                        for(int i=0; i < billList.size(); i++)
-                        {
-                            billList.get(i).Votes.clear();
-                            for(VoteItem v: vItems)
-                            {
-                                if(billList.get(i).Id.equals(v.BillId))
-                                {
-                                    VoteItem temp = new VoteItem();
-                                    temp.Result = v.Result;
-                                    temp.Id = v.Id;
-                                    temp.BillId = v.BillId;
-                                    temp.PersonId = v.PersonId;
-                                    billList.get(i).Votes.add(temp);
-                                }
-                            }
-
-                        }
-
-                        billAdapter.notifyDataSetChanged();
-
-                    }
-
+                    getVoteItemList();
                     break;
                 }
                 case PeopleManager.PULL_SUCCESS: {
@@ -97,11 +79,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                     voteItemsList.clear();
 
-                    vtManager.clearData();
+                    vtManagerList.clear();
+                    final GsonBuilder gsonBuilder = new GsonBuilder();
+                    gsonBuilder.registerTypeAdapter(Vote.class, new VoteDeserializer());
+                    final Gson gson = gsonBuilder.create();
+
                     for(BillItem b: billList) {
 
                         for (PersonItem p : personList) {
-                            vtManager.pullRecords(b.Id, p.Id);
+
+                            VoteManager temp = new VoteManager(context, tabsApi, gson);
+                            temp.pullRecords(b.Id, p.Id, true);
+                            vtManagerList.add(temp);
+
+                            VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
+                            tempFalse.pullRecords(b.Id, p.Id, false);
+                            vtManagerList.add(tempFalse);
                         }
                     }
 
@@ -121,12 +114,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         CurrentPage = bllManager.getmMeta().Page;
                     }
 
-
-                    vtManager = new VoteManager(context, tabsApi);
-
+                    vtManagerList.clear();
+                    final GsonBuilder gsonBuilder = new GsonBuilder();
+                    gsonBuilder.registerTypeAdapter(Vote.class, new VoteDeserializer());
+                    final Gson gson = gsonBuilder.create();
                     for(BillItem b: billList) {
+
                         for (PersonItem p : personList) {
-                            vtManager.pullRecords(b.Id, p.Id);
+
+                            VoteManager temp = new VoteManager(context, tabsApi, gson);
+                            temp.pullRecords(b.Id, p.Id, true);
+                            vtManagerList.add(temp);
+
+                            VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
+                            tempFalse.pullRecords(b.Id, p.Id, false);
+                            vtManagerList.add(tempFalse);
                         }
                     }
 
@@ -135,6 +137,58 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         }
     };
+
+    private void getVoteItemList()
+    {
+        for(VoteManager vtManager: vtManagerList)
+        {
+            if(!vtManager.isFinished)
+            {
+                ArrayList<VoteItem> vItems = vtManager.getVoteItems();
+                if(vItems.size() > 0)
+                {
+                    voteItemsList.addAll(vItems);
+
+                    for(int i=0; i < billList.size(); i++)
+                    {
+                        for(PersonItem p: personList)
+                        {
+                            for(VoteItem v: vItems)
+                            {
+                                if(billList.get(i).Id.equals(v.BillId) && p.Id.equals(v.PersonId) && !billList.get(i).Votes.contains(v))
+                                {
+                                    v.Name = p.FullName;
+
+                                    int index = billList.get(i).Votes.indexOf(v);
+                                    //There is a vote already in the list, we should only have one in the list, prefferably the latest
+                                    if(index > 0)
+                                    {
+                                        VoteItem old = billList.get(i).Votes.get(index);
+                                        if(old.Updated.before(v.Updated))
+                                        {
+                                            billList.get(i).Votes.remove(index);
+                                            billList.get(i).Votes.add(v);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        billList.get(i).Votes.add(v);
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
+                    billAdapter.notifyDataSetChanged();
+                }
+            }
+
+        }
+    }
+
+
+
 
     private int get5NextPages()
     {
@@ -204,7 +258,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         };
 
-        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(this);
+        broadcastManager = LocalBroadcastManager.getInstance(this);
         IntentFilter filter = new IntentFilter();
         filter.addAction(PeopleManager.PULL_SUCCESS);
         filter.addAction(BillManager.PULL_SUCCESS);
@@ -219,14 +273,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         bllManager = new BillManager(context, tabsApi);
 
-        vtManager = new VoteManager(context, tabsApi);
-
         pplManager = new PeopleManager(context, tabsApi);
     }
 
     @Override
     protected void onStart() {
         mGoogleApiClient.connect();
+
         super.onStart();
     }
 

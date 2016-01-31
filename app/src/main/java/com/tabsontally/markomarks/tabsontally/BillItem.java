@@ -1,5 +1,6 @@
 package com.tabsontally.markomarks.tabsontally;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,7 +9,7 @@ import java.util.List;
 /**
  * Created by MarkoPhillipMarkovic on 1/16/2016.
  */
-public class BillItem {
+public class BillItem implements Serializable{
 
     public String Title;
     public int Index;
@@ -26,7 +27,7 @@ public class BillItem {
         Index = 0;
         Id="none";
         Votes = new ArrayList<>();
-        Description = "";
+        Description = "no description";
         CreatedAt = new Date();
         UpdatedAt = new Date();
     }
@@ -40,7 +41,5 @@ public class BillItem {
         return Description;
 
     }
-
-
 
 }

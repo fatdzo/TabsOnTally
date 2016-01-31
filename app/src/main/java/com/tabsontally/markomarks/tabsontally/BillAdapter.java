@@ -40,22 +40,20 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        BillItem bill = getItem(position);
+        final BillItem bill = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.bill_item, parent, false);
         }
-
-
 
         billView = (LinearLayout) convertView.findViewById(R.id.view_bill_item);
         billView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ctx, BillDetailActivity.class);
-
+                intent.putExtra("BillItem", bill);
                 //intent.putExtra(EXTRA_MESSAGE, message);
                 ctx.startActivity(intent);
             }

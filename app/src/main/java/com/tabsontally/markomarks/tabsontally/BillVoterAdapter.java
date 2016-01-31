@@ -2,6 +2,7 @@ package com.tabsontally.markomarks.tabsontally;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +18,13 @@ import java.util.ArrayList;
 /**
  * Created by MarkoPhillipMarkovic on 1/16/2016.
  */
-public class BillVoteAdapter extends ArrayAdapter<BillVoteItem> {
+public class BillVoterAdapter extends ArrayAdapter<VoteItem> {
 
     private Context ctx;
     private LegislatorVoteAdapter legVoteAdapter;
     private ListView legVotesListView;
 
-    public BillVoteAdapter(Context context, ArrayList<BillVoteItem> items)
+    public BillVoterAdapter(Context context, ArrayList<VoteItem> items)
     {
         super(context, 0, items);
         ctx = context;
@@ -34,22 +35,32 @@ public class BillVoteAdapter extends ArrayAdapter<BillVoteItem> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        BillVoteItem bill = getItem(position);
+        VoteItem bill = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.bill_voter_item, parent, false);
         }
 
         // Lookup view for data population
-        TextView billIndex = (TextView) convertView.findViewById(R.id.txt_BillDetailVoteIndex);
-        billIndex.setText(String.valueOf(bill.Index) + ". ");
-        TextView billName = (TextView) convertView.findViewById(R.id.txt_BillDetailVoteName);
-        billName.setText(bill.FullName);
+        TextView billIndex = (TextView) convertView.findViewById(R.id.txt_BillDetailVoterIndex);
+        billIndex.setText(String.valueOf(position + 1) + ". ");
+        TextView billName = (TextView) convertView.findViewById(R.id.txt_BillDetailVoterName);
+        billName.setText(bill.Name);
 
-        legVoteAdapter = new LegislatorVoteAdapter(ctx, bill.Votes);
+        LinearLayout billVoteLay = (LinearLayout) convertView.findViewById(R.id.lin_BillDetailVoterVoteLayout);
 
-        legVotesListView = (ListView) convertView.findViewById(R.id.lst_legVotes);
-        legVotesListView.setAdapter(legVoteAdapter);
+        TextView billVote = (TextView) convertView.findViewById(R.id.txt_BillDetailVoterVote);
+        billVote.setText(String.valueOf(bill.getPersonVotedString()));
+
+        if(bill.PersonVoted)
+        {
+            billVoteLay.setBackgroundColor(Color.GREEN);
+        }
+        else
+        {
+            billVoteLay.setBackgroundColor(Color.RED);
+        }
+
 
         return convertView;
     }

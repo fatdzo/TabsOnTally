@@ -18,6 +18,17 @@ public class Vote implements Comparable<Vote> {
     private String mId;
     private String mResult;
 
+    public boolean getPersonVoted() {
+        return mPersonVoted;
+    }
+
+    public void setHasPersonVoted(boolean mPersonVoted) {
+        this.mPersonVoted = mPersonVoted;
+    }
+
+    //How did the person vote, true == YES, false == NO
+    private boolean mPersonVoted;
+
     public String getmBillId() {
         return mBillId;
     }

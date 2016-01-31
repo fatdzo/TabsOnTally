@@ -31,11 +31,18 @@ public class PeopleManager extends BaseRouteManager {
 
     private static final String ROUTE = "people/";
 
+    private final Gson mGson;
+
 
     public PeopleManager(Context context, APIConfig config) {
         super(context, config);
         mPeople = new HashMap<>();
         mUsePaging = false;
+
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Person.class, new PersonDeserializer());
+        final Gson gson = gsonBuilder.create();
+        mGson = gson;
     }
 
     public void pullPeopleFromLatLong(double latitude, double longitude)
@@ -95,13 +102,12 @@ public class PeopleManager extends BaseRouteManager {
         if(page == 0)
             return;
 
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Person.class, new PersonDeserializer());
-        final Gson gson = gsonBuilder.create();
+
 
         this.setRouteParameters(getRouteParameters());
         Ion.with(mContext)
                 .load(getUrl(page, mUsePaging))
+                .noCache()
                 .addHeader(mApiConfig.getApiKeyHeader(), mApiConfig.getApiKey())
                 .asJsonObject()
                 .setCallback(new FutureCallback<JsonObject>() {
@@ -119,7 +125,7 @@ public class PeopleManager extends BaseRouteManager {
                         }
 
                         for (JsonElement element : data) {
-                            Person person = gson.fromJson(element, Person.class);
+                            Person person = mGson.fromJson(element, Person.class);
                             mPeople.put(person.getId(), person);
                         }
                         switchState(FINISHED);

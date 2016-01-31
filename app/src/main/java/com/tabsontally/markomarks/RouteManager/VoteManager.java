@@ -29,38 +29,38 @@ public class VoteManager extends BaseRouteManager {
     public static final String PULL_SUCCESS = "com.tabsontally.markomarks.votemanager.PULL SUCCESS";
     private static final String ROUTE = "votes/";
 
+    public boolean isFinished = false;
+
+    private Gson mGson;
 
     HashMap<String, Vote> mVotes;
 
-    public VoteManager(Context context, APIConfig config) {
+    public VoteManager(Context context, APIConfig config, Gson gson) {
         super(context, config);
         mVotes = new HashMap<>();
         mUsePaging = false;
         mUsedUrls = new HashMap<>();
+        mGson = gson;
     }
 
-    public void pullRecords(String billId, String personId)
+    public void pullRecords(String billId, String personId, boolean legislatorVote)
     {
         switchState(IDLE);
-        pullRecordStep(mCurrentPage, billId, personId);
+        pullRecordStep(mCurrentPage, billId, personId, legislatorVote);
     }
 
-    private void pullRecordStep(int page, final String billId, final String personId) {
+    private void pullRecordStep(int page, final String billId, final String personId, final boolean legislatorVote) {
         if(page == 0)
             return;
-
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Vote.class, new VoteDeserializer());
-        final Gson gson = gsonBuilder.create();
-
         //We are trying to make sure that we don't call the same URL more than once. Around 100 API calls are made when the results are loaded.
         if(!mUsedUrls.containsKey(billId + personId))
         {
-            this.setRouteParameters(getUrlParameters(billId, personId));
+            this.setRouteParameters(getUrlParameters(billId, personId, legislatorVote));
             String votesUrl = getUrl(page, mUsePaging);
             mUsedUrls.put(billId + personId, votesUrl);
             Ion.with(mContext)
                     .load(votesUrl)
+                    .noCache()
                     .addHeader(mApiConfig.getApiKeyHeader(), mApiConfig.getApiKey())
                     .asJsonObject()
                     .setCallback(new FutureCallback<JsonObject>() {
@@ -78,9 +78,10 @@ public class VoteManager extends BaseRouteManager {
                             }
 
                             for (JsonElement element : data) {
-                                Vote vote = gson.fromJson(element, Vote.class);
+                                Vote vote = mGson.fromJson(element, Vote.class);
                                 vote.setmBillId(billId);
                                 vote.setmPersonId(personId);
+                                vote.setHasPersonVoted(legislatorVote);
                                 mVotes.put(billId + personId, vote);
                             }
 
@@ -113,11 +114,12 @@ public class VoteManager extends BaseRouteManager {
             temp.Index = index;
             temp.BillId = vt.getmBillId();
             temp.PersonId = vt.getmPersonId();
-            index+=1;
+            temp.PersonVoted = vt.getPersonVoted();
+            temp.Updated = vt.getmUpdated();
             result.add(temp);
+            index+=1;
 
         }
-        Log.e("TABSONTALLY", "Number of Votes: " + String.valueOf(result.size()));
 
         return result;
     }
@@ -128,7 +130,7 @@ public class VoteManager extends BaseRouteManager {
         return ROUTE;
     }
 
-    public String getUrlParameters(String billId, String personId){
+    public String getUrlParameters(String billId, String personId, boolean voted){
         String result = "";
 
         if(billId != null && billId.length() > 0)
@@ -144,6 +146,14 @@ public class VoteManager extends BaseRouteManager {
             }
             result += "voter=" + personId;
 
+        }
+        if(voted)
+        {
+            result += "&option=yes";
+        }
+        else
+        {
+            result += "&option=no";
         }
         return result;
     }

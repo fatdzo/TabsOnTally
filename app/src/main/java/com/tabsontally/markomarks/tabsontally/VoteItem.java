@@ -1,9 +1,12 @@
 package com.tabsontally.markomarks.tabsontally;
 
+import java.io.Serializable;
+import java.util.Date;
+
 /**
  * Created by MarkoPhillipMarkovic on 1/16/2016.
  */
-public class VoteItem {
+public class VoteItem  implements Serializable{
     public int Index;
     public String Id;
     public String Name;
@@ -11,6 +14,22 @@ public class VoteItem {
     public String Result;
     public String BillId;
     public String PersonId;
+    //how did the legislator vote, true == YES, false == NO
+    public boolean PersonVoted = false;
+    public Date Updated;
+
+    public String getPersonVotedString()
+    {
+        if(PersonVoted)
+        {
+            return "YES";
+        }
+        else
+        {
+            return "NO";
+        }
+    }
+
 
     public int getResultValue()
     {
@@ -41,6 +60,20 @@ public class VoteItem {
         BillId = "";
         PersonId = "";
     }
+
+    @Override
+    public boolean equals(Object another)
+    {
+        boolean isEqual= false;
+
+        if (another != null && another instanceof VoteItem)
+        {
+            isEqual = (this.PersonId.equals(((VoteItem) another).PersonId)) && (this.BillId.equals(((VoteItem) another).BillId));
+        }
+
+        return isEqual;
+    }
+
 
 
 }
