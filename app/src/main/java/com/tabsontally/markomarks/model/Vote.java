@@ -1,5 +1,7 @@
 package com.tabsontally.markomarks.model;
 
+import com.tabsontally.markomarks.RouteManager.LegislatorVotingOption;
+
 import java.util.Date;
 
 /**
@@ -18,16 +20,15 @@ public class Vote implements Comparable<Vote> {
     private String mId;
     private String mResult;
 
-    public boolean getPersonVoted() {
-        return mPersonVoted;
+    public LegislatorVotingOption getmPersonVoteOption() {
+        return mPersonVoteOption;
     }
 
-    public void setHasPersonVoted(boolean mPersonVoted) {
-        this.mPersonVoted = mPersonVoted;
+    public void setmPersonVoteOption(LegislatorVotingOption mPersonVoteOption) {
+        this.mPersonVoteOption = mPersonVoteOption;
     }
 
-    //How did the person vote, true == YES, false == NO
-    private boolean mPersonVoted;
+    private LegislatorVotingOption mPersonVoteOption;
 
     public String getmBillId() {
         return mBillId;

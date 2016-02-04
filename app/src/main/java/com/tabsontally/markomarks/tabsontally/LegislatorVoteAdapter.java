@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.tabsontally.markomarks.RouteManager.LegislatorVotingOption;
+
 import java.util.ArrayList;
 
 /**
@@ -39,14 +41,19 @@ public class LegislatorVoteAdapter extends ArrayAdapter<VoteItem> {
 
         // Lookup view for data population
         TextView voteResult = (TextView) convertView.findViewById(R.id.txt_legislatorVoteResult);
-        if(vote.PersonVoted)
+        if(vote.PersonVotingOption == LegislatorVotingOption.YES)
         {
             lin_LegVote.setBackgroundColor(Color.GREEN);
         }
-        else
+        else if(vote.PersonVotingOption == LegislatorVotingOption.NO)
         {
             lin_LegVote.setBackgroundColor(Color.RED);
         }
+        else if(vote.PersonVotingOption == LegislatorVotingOption.NOTVOTING)
+        {
+            lin_LegVote.setBackgroundColor(Color.BLUE);
+        }
+
         voteResult.setText(String.valueOf(vote.getPersonVotedString()));
 
         return convertView;

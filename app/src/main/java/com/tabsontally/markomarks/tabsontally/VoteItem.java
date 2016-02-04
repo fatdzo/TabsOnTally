@@ -1,5 +1,7 @@
 package com.tabsontally.markomarks.tabsontally;
 
+import com.tabsontally.markomarks.RouteManager.LegislatorVotingOption;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -15,19 +17,24 @@ public class VoteItem  implements Serializable{
     public String BillId;
     public String PersonId;
     //how did the legislator vote, true == YES, false == NO
-    public boolean PersonVoted = false;
+    public LegislatorVotingOption PersonVotingOption;
     public Date Updated;
 
     public String getPersonVotedString()
     {
-        if(PersonVoted)
+        if(PersonVotingOption == LegislatorVotingOption.YES)
         {
             return "YES";
         }
-        else
+        if(PersonVotingOption == LegislatorVotingOption.NO)
         {
             return "NO";
         }
+        if(PersonVotingOption == LegislatorVotingOption.NOTVOTING)
+        {
+            return "NOT VOTING";
+        }
+        return "UNKNOWN";
     }
 
 

@@ -43,19 +43,20 @@ public class VoteManager extends BaseRouteManager {
         mGson = gson;
     }
 
-    public void pullRecords(String billId, String personId, boolean legislatorVote)
+    //legislatorVoteOption - it can be Yes, No,
+    public void pullRecords(String billId, String personId, LegislatorVotingOption legislatorVoteOption)
     {
         switchState(IDLE);
-        pullRecordStep(mCurrentPage, billId, personId, legislatorVote);
+        pullRecordStep(mCurrentPage, billId, personId, legislatorVoteOption);
     }
 
-    private void pullRecordStep(int page, final String billId, final String personId, final boolean legislatorVote) {
+    private void pullRecordStep(int page, final String billId, final String personId, final LegislatorVotingOption legislatorVoteOption) {
         if(page == 0)
             return;
         //We are trying to make sure that we don't call the same URL more than once. Around 100 API calls are made when the results are loaded.
         if(!mUsedUrls.containsKey(billId + personId))
         {
-            this.setRouteParameters(getUrlParameters(billId, personId, legislatorVote));
+            this.setRouteParameters(getUrlParameters(billId, personId, legislatorVoteOption));
             String votesUrl = getUrl(page, mUsePaging);
             mUsedUrls.put(billId + personId, votesUrl);
             Ion.with(mContext)
@@ -81,7 +82,7 @@ public class VoteManager extends BaseRouteManager {
                                 Vote vote = mGson.fromJson(element, Vote.class);
                                 vote.setmBillId(billId);
                                 vote.setmPersonId(personId);
-                                vote.setHasPersonVoted(legislatorVote);
+                                vote.setmPersonVoteOption(legislatorVoteOption);
                                 mVotes.put(billId + personId, vote);
                             }
 
@@ -114,7 +115,7 @@ public class VoteManager extends BaseRouteManager {
             temp.Index = index;
             temp.BillId = vt.getmBillId();
             temp.PersonId = vt.getmPersonId();
-            temp.PersonVoted = vt.getPersonVoted();
+            temp.PersonVotingOption = vt.getmPersonVoteOption();
             temp.Updated = vt.getmUpdated();
             result.add(temp);
             index+=1;
@@ -130,7 +131,7 @@ public class VoteManager extends BaseRouteManager {
         return ROUTE;
     }
 
-    public String getUrlParameters(String billId, String personId, boolean voted){
+    public String getUrlParameters(String billId, String personId, LegislatorVotingOption legislatorVoteOption){
         String result = "";
 
         if(billId != null && billId.length() > 0)
@@ -147,14 +148,19 @@ public class VoteManager extends BaseRouteManager {
             result += "voter=" + personId;
 
         }
-        if(voted)
+        if(legislatorVoteOption == LegislatorVotingOption.YES)
         {
             result += "&option=yes";
         }
-        else
+        if(legislatorVoteOption == LegislatorVotingOption.NO)
         {
             result += "&option=no";
         }
+        if(legislatorVoteOption == LegislatorVotingOption.NOTVOTING)
+        {
+            result += "&option=not+voting";
+        }
+
         return result;
     }
 

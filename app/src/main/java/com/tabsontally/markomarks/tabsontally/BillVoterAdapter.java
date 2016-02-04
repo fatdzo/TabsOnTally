@@ -11,6 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.tabsontally.markomarks.RouteManager.LegislatorVotingOption;
+
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
@@ -52,13 +54,17 @@ public class BillVoterAdapter extends ArrayAdapter<VoteItem> {
         TextView billVote = (TextView) convertView.findViewById(R.id.txt_BillDetailVoterVote);
         billVote.setText(String.valueOf(bill.getPersonVotedString()));
 
-        if(bill.PersonVoted)
+        if(bill.PersonVotingOption == LegislatorVotingOption.YES)
         {
             billVoteLay.setBackgroundColor(Color.GREEN);
         }
-        else
+        else if(bill.PersonVotingOption == LegislatorVotingOption.NO)
         {
             billVoteLay.setBackgroundColor(Color.RED);
+        }
+        else if(bill.PersonVotingOption == LegislatorVotingOption.NOTVOTING)
+        {
+            billVoteLay.setBackgroundColor(Color.BLUE);
         }
 
 

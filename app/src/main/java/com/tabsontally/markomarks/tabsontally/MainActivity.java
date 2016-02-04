@@ -19,8 +19,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.koushikdutta.ion.Ion;
 import com.tabsontally.markomarks.RouteManager.BillManager;
+import com.tabsontally.markomarks.RouteManager.LegislatorVotingOption;
 import com.tabsontally.markomarks.RouteManager.PeopleManager;
 import com.tabsontally.markomarks.RouteManager.VoteManager;
 import com.tabsontally.markomarks.json.VoteDeserializer;
@@ -89,11 +89,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         for (PersonItem p : personList) {
 
                             VoteManager temp = new VoteManager(context, tabsApi, gson);
-                            temp.pullRecords(b.Id, p.Id, true);
+                            temp.pullRecords(b.Id, p.Id, LegislatorVotingOption.YES);
                             vtManagerList.add(temp);
 
                             VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
-                            tempFalse.pullRecords(b.Id, p.Id, false);
+                            tempFalse.pullRecords(b.Id, p.Id, LegislatorVotingOption.NO);
                             vtManagerList.add(tempFalse);
                         }
                     }
@@ -123,12 +123,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         for (PersonItem p : personList) {
 
                             VoteManager temp = new VoteManager(context, tabsApi, gson);
-                            temp.pullRecords(b.Id, p.Id, true);
+                            temp.pullRecords(b.Id, p.Id, LegislatorVotingOption.YES);
                             vtManagerList.add(temp);
 
                             VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
-                            tempFalse.pullRecords(b.Id, p.Id, false);
+                            tempFalse.pullRecords(b.Id, p.Id, LegislatorVotingOption.NO);
                             vtManagerList.add(tempFalse);
+
+                            VoteManager tempNotVoting = new VoteManager(context, tabsApi, gson);
+                            tempNotVoting.pullRecords(b.Id, p.Id, LegislatorVotingOption.NOTVOTING);
+                            vtManagerList.add(tempNotVoting);
                         }
                     }
 
@@ -278,15 +282,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     protected void onStart() {
-        mGoogleApiClient.connect();
-
         super.onStart();
+        mGoogleApiClient.connect();
     }
 
     @Override
     protected void onStop() {
-        mGoogleApiClient.disconnect();
         super.onStop();
+        mGoogleApiClient.disconnect();
     }
 
     private void InitializeControls()
