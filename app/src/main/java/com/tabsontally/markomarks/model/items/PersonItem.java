@@ -1,4 +1,4 @@
-package com.tabsontally.markomarks.tabsontally;
+package com.tabsontally.markomarks.model.items;
 
 /**
  * Created by MarkoPhillipMarkovic on 1/16/2016.

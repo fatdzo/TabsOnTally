@@ -1,4 +1,17 @@
 <resources>
     <string name="app_name">TabsOnTally</string>
     <string name="title_activity_bill_detail">BillDetail</string>
+
+    <string-array name="bill_page_sizes">
+        <item>10</item>
+        <item>20</item>
+        <item>50</item>
+        <item>100</item>
+    </string-array>
+
+    <string-array name="bill_sort_by">
+        <item>date updated</item>
+        <item>name</item>
+        <item>vote</item>
+    </string-array>
 </resources>

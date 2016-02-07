@@ -1,4 +1,4 @@
-package com.tabsontally.markomarks.tabsontally;
+package com.tabsontally.markomarks.arrayadapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -9,7 +9,9 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.tabsontally.markomarks.RouteManager.LegislatorVotingOption;
+import com.tabsontally.markomarks.routemanager.LegislatorVotingOption;
+import com.tabsontally.markomarks.tabsontally.R;
+import com.tabsontally.markomarks.model.items.VoteItem;
 
 import java.util.ArrayList;
 

@@ -8,10 +8,11 @@ import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -19,15 +20,19 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.tabsontally.markomarks.RouteManager.BillManager;
-import com.tabsontally.markomarks.RouteManager.LegislatorVotingOption;
-import com.tabsontally.markomarks.RouteManager.PeopleManager;
-import com.tabsontally.markomarks.RouteManager.VoteManager;
+import com.tabsontally.markomarks.routemanager.BillManager;
+import com.tabsontally.markomarks.routemanager.LegislatorVotingOption;
+import com.tabsontally.markomarks.routemanager.PeopleManager;
+import com.tabsontally.markomarks.routemanager.VoteManager;
+import com.tabsontally.markomarks.arrayadapters.BillAdapter;
 import com.tabsontally.markomarks.json.MetaDeserializer;
 import com.tabsontally.markomarks.json.VoteDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
 import com.tabsontally.markomarks.model.Meta;
 import com.tabsontally.markomarks.model.Vote;
+import com.tabsontally.markomarks.model.items.BillItem;
+import com.tabsontally.markomarks.model.items.PersonItem;
+import com.tabsontally.markomarks.model.items.VoteItem;
 
 import java.util.ArrayList;
 
@@ -55,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private int CurrentPage = 1;
     private int MaxPage = 1;
     private int MinPage = 1;
+    private int PageSize = 20;
 
     private Button btn_PrevPageButton;
     private Button btn_NextPageButton;
@@ -103,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     break;
                 }
                 case BillManager.PULL_SUCCESS: {
-                    billList.clear();
+                    /*billList.clear();
                     billList.addAll(bllManager.getBillItemList());
 
                     billsListView.smoothScrollToPosition(0);
@@ -135,6 +141,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     }
 
                     break;
+                    */
                 }
             }
         }
@@ -256,6 +263,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
         context = MainActivity.this;
 
+        Spinner spinner = (Spinner) findViewById(R.id.spinPageSize);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.bill_page_sizes, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+
         InitializeControls();
 
         tabsApi = new APIConfig() {
@@ -329,7 +344,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onClick(View v) {
 
                 CurrentPage = get5NextPages();
-                bllManager.pullRecordPage(CurrentPage);
+                //bllManager.pullRecordPage(CurrentPage);
                 if (CurrentPage == MaxPage) {
                     btn_NextPageButton.setEnabled(false);
                     btn_Next5PagesButton.setEnabled(false);
@@ -346,7 +361,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 CurrentPage = getNextPage();
-                bllManager.pullRecordPage(CurrentPage);
+                //bllManager.pullRecordPage(CurrentPage);
 
                 if(CurrentPage == MaxPage)
                 {
@@ -366,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 CurrentPage = getPrev5Pages();
-                bllManager.pullRecordPage(CurrentPage);
+                //bllManager.pullRecordPage(CurrentPage);
                 if (CurrentPage == 1) {
                     btn_PrevPageButton.setEnabled(false);
                     btn_Prev5PagesButton.setEnabled(false);
@@ -383,7 +398,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 CurrentPage = getPreviousPage();
-                bllManager.pullRecordPage(CurrentPage);
+                //bllManager.pullRecordPage(CurrentPage);
                 if(CurrentPage == 1)
                 {
                     btn_PrevPageButton.setEnabled(false);

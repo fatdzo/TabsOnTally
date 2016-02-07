@@ -1,8 +1,6 @@
 package com.tabsontally.markomarks.model;
 
-import android.util.Log;
-
-import com.tabsontally.markomarks.RouteManager.LegislatorVotingOption;
+import com.tabsontally.markomarks.routemanager.LegislatorVotingOption;
 
 import java.util.Date;
 

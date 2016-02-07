@@ -2,11 +2,14 @@ package com.tabsontally.markomarks.tabsontally;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.tabsontally.markomarks.arrayadapters.BillVoterAdapter;
+import com.tabsontally.markomarks.model.items.BillItem;
+import com.tabsontally.markomarks.model.items.VoteItem;
 
 import java.util.ArrayList;
 

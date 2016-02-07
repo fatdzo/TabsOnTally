@@ -1,6 +1,6 @@
-package com.tabsontally.markomarks.tabsontally;
+package com.tabsontally.markomarks.model.items;
 
-import com.tabsontally.markomarks.RouteManager.LegislatorVotingOption;
+import com.tabsontally.markomarks.routemanager.LegislatorVotingOption;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -35,24 +35,6 @@ public class VoteItem  implements Serializable{
             return "NOT VOTING";
         }
         return "UNKNOWN";
-    }
-
-
-    public int getResultValue()
-    {
-        int resValue = 0;
-        String res = Result.trim();
-        if(res.equals("fail"))
-        {
-            resValue = -1;
-        }
-
-        if(res.equals("pass"))
-        {
-            resValue = 1;
-        }
-
-        return resValue;
     }
 
 

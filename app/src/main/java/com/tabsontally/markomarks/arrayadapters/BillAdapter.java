@@ -1,4 +1,4 @@
-package com.tabsontally.markomarks.tabsontally;
+package com.tabsontally.markomarks.arrayadapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.tabsontally.markomarks.tabsontally.BillDetailActivity;
+import com.tabsontally.markomarks.model.items.BillItem;
+import com.tabsontally.markomarks.tabsontally.R;
 
 import java.util.ArrayList;
 

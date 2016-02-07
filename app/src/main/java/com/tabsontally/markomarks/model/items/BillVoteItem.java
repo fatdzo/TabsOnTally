@@ -1,4 +1,6 @@
-package com.tabsontally.markomarks.tabsontally;
+package com.tabsontally.markomarks.model.items;
+
+import com.tabsontally.markomarks.model.items.VoteItem;
 
 import java.util.ArrayList;
 

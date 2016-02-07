@@ -1,12 +1,9 @@
-package com.tabsontally.markomarks.tabsontally;
-
-import com.tabsontally.markomarks.model.Vote;
+package com.tabsontally.markomarks.model.items;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by MarkoPhillipMarkovic on 1/16/2016.
