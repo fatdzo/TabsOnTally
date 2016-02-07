@@ -80,7 +80,4 @@ public class VoteItem  implements Serializable{
 
         return isEqual;
     }
-
-
-
 }

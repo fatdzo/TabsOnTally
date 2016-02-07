@@ -23,8 +23,10 @@ import com.tabsontally.markomarks.RouteManager.BillManager;
 import com.tabsontally.markomarks.RouteManager.LegislatorVotingOption;
 import com.tabsontally.markomarks.RouteManager.PeopleManager;
 import com.tabsontally.markomarks.RouteManager.VoteManager;
+import com.tabsontally.markomarks.json.MetaDeserializer;
 import com.tabsontally.markomarks.json.VoteDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
+import com.tabsontally.markomarks.model.Meta;
 import com.tabsontally.markomarks.model.Vote;
 
 import java.util.ArrayList;
@@ -38,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private ArrayList<BillItem> billList = new ArrayList<>();
     private ArrayList<PersonItem> personList = new ArrayList<>();
-    private ArrayList<VoteItem> voteItemsList = new ArrayList<>();
 
     private APIConfig tabsApi;
 
@@ -77,32 +78,31 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     personList.clear();
                     personList.addAll(pplManager.getPersonItemList());
 
-                    voteItemsList.clear();
-
                     vtManagerList.clear();
                     final GsonBuilder gsonBuilder = new GsonBuilder();
                     gsonBuilder.registerTypeAdapter(Vote.class, new VoteDeserializer());
+                    gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
                     final Gson gson = gsonBuilder.create();
 
-                    for(BillItem b: billList) {
+                    for (PersonItem p : personList) {
 
-                        for (PersonItem p : personList) {
+                        VoteManager temp = new VoteManager(context, tabsApi, gson);
+                        temp.pullRecords(p.Id, p.FullName, LegislatorVotingOption.YES);
+                        vtManagerList.add(temp);
 
-                            VoteManager temp = new VoteManager(context, tabsApi, gson);
-                            temp.pullRecords(b.Id, p.Id, LegislatorVotingOption.YES);
-                            vtManagerList.add(temp);
+                        VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
+                        tempFalse.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NO);
+                        vtManagerList.add(tempFalse);
 
-                            VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
-                            tempFalse.pullRecords(b.Id, p.Id, LegislatorVotingOption.NO);
-                            vtManagerList.add(tempFalse);
-                        }
+                        VoteManager tempNotVoting = new VoteManager(context, tabsApi, gson);
+                        tempNotVoting.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NOTVOTING);
+                        vtManagerList.add(tempNotVoting);
                     }
 
 
                     break;
                 }
                 case BillManager.PULL_SUCCESS: {
-                    voteItemsList.clear();
                     billList.clear();
                     billList.addAll(bllManager.getBillItemList());
 
@@ -117,23 +117,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     vtManagerList.clear();
                     final GsonBuilder gsonBuilder = new GsonBuilder();
                     gsonBuilder.registerTypeAdapter(Vote.class, new VoteDeserializer());
+                    gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
                     final Gson gson = gsonBuilder.create();
-                    for(BillItem b: billList) {
+                    for (PersonItem p : personList) {
 
-                        for (PersonItem p : personList) {
+                        VoteManager temp = new VoteManager(context, tabsApi, gson);
+                        temp.pullRecords(p.Id, p.FullName, LegislatorVotingOption.YES);
+                        vtManagerList.add(temp);
 
-                            VoteManager temp = new VoteManager(context, tabsApi, gson);
-                            temp.pullRecords(b.Id, p.Id, LegislatorVotingOption.YES);
-                            vtManagerList.add(temp);
+                        VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
+                        tempFalse.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NO);
+                        vtManagerList.add(tempFalse);
 
-                            VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
-                            tempFalse.pullRecords(b.Id, p.Id, LegislatorVotingOption.NO);
-                            vtManagerList.add(tempFalse);
-
-                            VoteManager tempNotVoting = new VoteManager(context, tabsApi, gson);
-                            tempNotVoting.pullRecords(b.Id, p.Id, LegislatorVotingOption.NOTVOTING);
-                            vtManagerList.add(tempNotVoting);
-                        }
+                        VoteManager tempNotVoting = new VoteManager(context, tabsApi, gson);
+                        tempNotVoting.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NOTVOTING);
+                        vtManagerList.add(tempNotVoting);
                     }
 
                     break;
@@ -142,52 +140,67 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     };
 
+    private int billListContainsBillId(String billId)
+    {
+
+        for(int i=0; i< billList.size(); i++)
+        {
+            if(billList.get(i).Id.equals(billId))
+            {
+                return i;
+            }
+
+        }
+
+        return -1;
+    }
+
+
     private void getVoteItemList()
     {
         for(VoteManager vtManager: vtManagerList)
         {
-            if(!vtManager.isFinished)
+            ArrayList<VoteItem> vItems = vtManager.getVoteItems();
+            if(vItems.size() > 0)
             {
-                ArrayList<VoteItem> vItems = vtManager.getVoteItems();
-                if(vItems.size() > 0)
+                for(VoteItem v: vItems)
                 {
-                    voteItemsList.addAll(vItems);
+                    int foundBillIndex = billListContainsBillId(v.BillId);
 
-                    for(int i=0; i < billList.size(); i++)
+                    if(foundBillIndex >= 0)
                     {
-                        for(PersonItem p: personList)
+                        int foundVoteIndex = billList.get(foundBillIndex).getVoteIndex(v);
+                        if(foundVoteIndex >= 0)
                         {
-                            for(VoteItem v: vItems)
-                            {
-                                if(billList.get(i).Id.equals(v.BillId) && p.Id.equals(v.PersonId) && !billList.get(i).Votes.contains(v))
+                            if(billList.get(foundBillIndex).containsVote(v)) {
+                                VoteItem foundVote = billList.get(foundBillIndex).Votes.get(foundVoteIndex);
+                                if(foundVote.Updated.before(v.Updated))
                                 {
-                                    v.Name = p.FullName;
-
-                                    int index = billList.get(i).Votes.indexOf(v);
-                                    //There is a vote already in the list, we should only have one in the list, prefferably the latest
-                                    if(index > 0)
-                                    {
-                                        VoteItem old = billList.get(i).Votes.get(index);
-                                        if(old.Updated.before(v.Updated))
-                                        {
-                                            billList.get(i).Votes.remove(index);
-                                            billList.get(i).Votes.add(v);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        billList.get(i).Votes.add(v);
-                                    }
-
+                                    billList.get(foundBillIndex).Votes.remove(foundVoteIndex);
+                                    billList.get(foundBillIndex).Votes.add(v);
                                 }
                             }
                         }
+                        else
+                        {
+                            billList.get(foundBillIndex).Votes.add(v);
+                        }
+
                     }
-
-                    billAdapter.notifyDataSetChanged();
+                    else
+                    {
+                        BillItem temp = new BillItem();
+                        temp.Id = v.BillId;
+                        temp.Title = v.BillId;
+                        temp.UpdatedAt = v.Updated;
+                        temp.Votes.add(v);
+                        temp.Index = billList.size() + 1;
+                        billList.add(temp);
+                    }
                 }
-            }
 
+                billAdapter.notifyDataSetChanged();
+            }
         }
     }
 
@@ -392,7 +405,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         if(userLocation!=null)
         {
             pplManager.pullPeopleFromLatLong(userLocation.getLatitude(), userLocation.getLongitude());
-            voteItemsList.clear();
         }
     }
 

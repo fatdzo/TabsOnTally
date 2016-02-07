@@ -52,7 +52,7 @@ public class BillManager  extends BaseRouteManager {
 
         mBills = new HashMap<>();
         switchState(IDLE);
-        pullRecords(mCurrentPage);
+        //pullRecords(mCurrentPage);
     }
 
     public ArrayList<BillItem> getBillItemList()
@@ -126,23 +126,30 @@ public class BillManager  extends BaseRouteManager {
                         }
 
                         JsonArray data = result.getAsJsonArray("data");
-                        JsonObject meta = result.getAsJsonObject("meta");
 
-                        mMeta = mGson.fromJson(meta, Meta.class);
                         if (data == null) {
                             switchState(FINISHED);
                             return;
                         }
+
+                        JsonObject meta = result.getAsJsonObject("meta");
+                        mMeta = mGson.fromJson(meta, Meta.class);
 
                         for (JsonElement element : data) {
                             Bill bill = mGson.fromJson(element, Bill.class);
                             mBills.put(bill.getId(), bill);
                         }
 
+                        //if (mMeta.Page != mMeta.Pages) {
+                        //    pullRecordStep(mMeta.Page + 1);
+                        //}
+
                         switchState(FINISHED);
                         return;
                     }
                 });
+
+
     }
 
     @Override

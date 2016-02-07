@@ -14,6 +14,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.tabsontally.markomarks.json.VoteDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
+import com.tabsontally.markomarks.model.Meta;
 import com.tabsontally.markomarks.model.Vote;
 import com.tabsontally.markomarks.tabsontally.VoteItem;
 
@@ -29,7 +30,7 @@ public class VoteManager extends BaseRouteManager {
     public static final String PULL_SUCCESS = "com.tabsontally.markomarks.votemanager.PULL SUCCESS";
     private static final String ROUTE = "votes/";
 
-    public boolean isFinished = false;
+    Meta mMeta = new Meta(1,1,0);
 
     private Gson mGson;
 
@@ -38,64 +39,65 @@ public class VoteManager extends BaseRouteManager {
     public VoteManager(Context context, APIConfig config, Gson gson) {
         super(context, config);
         mVotes = new HashMap<>();
-        mUsePaging = false;
-        mUsedUrls = new HashMap<>();
+        mUsePaging = true;
         mGson = gson;
     }
 
-    //legislatorVoteOption - it can be Yes, No,
-    public void pullRecords(String billId, String personId, LegislatorVotingOption legislatorVoteOption)
+    //legislatorVoteOption - it can be Yes, No, Not voting
+    public void pullRecords(final String personId, final String personName, LegislatorVotingOption legislatorVoteOption)
     {
+        mCurrentPage = 1;
         switchState(IDLE);
-        pullRecordStep(mCurrentPage, billId, personId, legislatorVoteOption);
+        pullRecordStep(mCurrentPage, personId, personName, legislatorVoteOption);
     }
 
-    private void pullRecordStep(int page, final String billId, final String personId, final LegislatorVotingOption legislatorVoteOption) {
+    private void pullRecordStep(final int page, final String personId, final String personName, final LegislatorVotingOption legislatorVoteOption) {
         if(page == 0)
             return;
-        //We are trying to make sure that we don't call the same URL more than once. Around 100 API calls are made when the results are loaded.
-        if(!mUsedUrls.containsKey(billId + personId))
-        {
-            this.setRouteParameters(getUrlParameters(billId, personId, legislatorVoteOption));
-            String votesUrl = getUrl(page, mUsePaging);
-            mUsedUrls.put(billId + personId, votesUrl);
-            Ion.with(mContext)
-                    .load(votesUrl)
-                    .noCache()
-                    .addHeader(mApiConfig.getApiKeyHeader(), mApiConfig.getApiKey())
-                    .asJsonObject()
-                    .setCallback(new FutureCallback<JsonObject>() {
-                        @Override
-                        public void onCompleted(Exception e, JsonObject result) {
-                            if (e != null) {
-                                switchState(FINISHED);
-                                return;
-                            }
 
-                            JsonArray data = result.getAsJsonArray("data");
-                            if (data == null) {
-                                switchState(FINISHED);
-                                return;
-                            }
-
-                            for (JsonElement element : data) {
-                                Vote vote = mGson.fromJson(element, Vote.class);
-                                vote.setmBillId(billId);
-                                vote.setmPersonId(personId);
-                                vote.setmPersonVoteOption(legislatorVoteOption);
-                                mVotes.put(billId + personId, vote);
-                            }
-
+        mCurrentPage = page;
+        this.setRouteParameters(getUrlParameters(null, personId, legislatorVoteOption));
+        String votesUrl = getUrl(page, mUsePaging);
+        Ion.with(mContext)
+                .load(votesUrl)
+                .noCache()
+                .addHeader(mApiConfig.getApiKeyHeader(), mApiConfig.getApiKey())
+                .asJsonObject()
+                .setCallback(new FutureCallback<JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject result) {
+                        if (e != null) {
                             switchState(FINISHED);
                             return;
                         }
-                    });
-        }
-        else
-        {
-            switchState(FINISHED);
-            return;
-        }
+
+                        JsonArray data = result.getAsJsonArray("data");
+                        if (data == null) {
+                            switchState(FINISHED);
+                            return;
+                        }
+                        JsonObject meta = result.getAsJsonObject("meta");
+                        mMeta = mGson.fromJson(meta, Meta.class);
+
+                        for (JsonElement element : data) {
+                            Vote vote = mGson.fromJson(element, Vote.class);
+                            vote.setmPersonId(personId);
+                            vote.setmPersonName(personName);
+                            vote.setmPersonVoteOption(legislatorVoteOption);
+                            mVotes.put(personId + vote.getmBillId(), vote);
+                        }
+
+                        if (mMeta.Page != mMeta.Pages && mMeta.Page > 0) {
+                            mCurrentPage = mMeta.Page + 1;
+                            pullRecordStep(mMeta.Page + 1, personId, personName, legislatorVoteOption);
+                        }
+                        else
+                        {
+                            switchState(FINISHED);
+                            return;
+                        }
+                    }
+                });
 
 
 
@@ -115,6 +117,7 @@ public class VoteManager extends BaseRouteManager {
             temp.Index = index;
             temp.BillId = vt.getmBillId();
             temp.PersonId = vt.getmPersonId();
+            temp.Name = vt.getmPersonName();
             temp.PersonVotingOption = vt.getmPersonVoteOption();
             temp.Updated = vt.getmUpdated();
             result.add(temp);

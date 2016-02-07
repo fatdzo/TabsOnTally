@@ -1,5 +1,7 @@
 package com.tabsontally.markomarks.model;
 
+import android.util.Log;
+
 import com.tabsontally.markomarks.RouteManager.LegislatorVotingOption;
 
 import java.util.Date;
@@ -9,6 +11,20 @@ import java.util.Date;
  */
 public class Vote implements Comparable<Vote> {
 
+    private String mId;
+    private String mResult;
+    private String mBillId;
+    private String mPersonId;
+    private String mPersonName;
+    private Date mUpdated;
+    private LegislatorVotingOption mPersonVoteOption;
+
+    private VoteRelationship mVoteRelationShip;
+
+    public VoteRelationship getmVoteRelationShip() {
+        return mVoteRelationShip;
+    }
+
     public String getmId() {
         return mId;
     }
@@ -17,9 +33,6 @@ public class Vote implements Comparable<Vote> {
         return mResult;
     }
 
-    private String mId;
-    private String mResult;
-
     public LegislatorVotingOption getmPersonVoteOption() {
         return mPersonVoteOption;
     }
@@ -27,8 +40,6 @@ public class Vote implements Comparable<Vote> {
     public void setmPersonVoteOption(LegislatorVotingOption mPersonVoteOption) {
         this.mPersonVoteOption = mPersonVoteOption;
     }
-
-    private LegislatorVotingOption mPersonVoteOption;
 
     public String getmBillId() {
         return mBillId;
@@ -46,21 +57,32 @@ public class Vote implements Comparable<Vote> {
         this.mPersonId = mPersonId;
     }
 
-    private String mBillId;
-    private String mPersonId;
+    public void setmPersonName(String personName)
+    {
+        this.mPersonName = personName;
+    }
+
+    public String getmPersonName()
+    {
+        return mPersonName;
+
+    }
+
+
 
     public Date getmUpdated() {
         return mUpdated;
     }
 
-    private Date mUpdated;
 
-    public Vote(String id, String result, Date updated)
+    public Vote(String id, String result, Date updated, VoteRelationship relationsShip)
     {
         mId = id;
         mResult = result;
         mUpdated = updated;
+        mVoteRelationShip = relationsShip;
 
+        mBillId = mVoteRelationShip.getmBillId();
     }
 
     @Override

@@ -33,8 +33,6 @@ public abstract class BaseRouteManager {
 
     private String mRouteParameters = "";
 
-    protected HashMap<String, String> mUsedUrls;
-
     public BaseRouteManager(Context context, APIConfig config) {
         mContext = context;
         mApiConfig = config;
@@ -71,11 +69,6 @@ public abstract class BaseRouteManager {
     }
 
     public abstract String getRoute();
-
-    public void clearData()
-    {
-        mUsedUrls.clear();
-    }
 
     /*The string should look something like "bill=12345&voter=12345" the getUrl() will handle the rest. Every derived class handles their own set of parameters so it seemed appropriate*/
     protected void setRouteParameters(String parameters)
