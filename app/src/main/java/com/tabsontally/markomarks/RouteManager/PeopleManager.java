@@ -15,7 +15,7 @@ import com.koushikdutta.ion.Ion;
 import com.tabsontally.markomarks.json.PersonDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
 import com.tabsontally.markomarks.model.Person;
-import com.tabsontally.markomarks.tabsontally.PersonItem;
+import com.tabsontally.markomarks.model.items.PersonItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -9,7 +9,6 @@ import com.tabsontally.markomarks.model.APIConfig;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.HashMap;
 
 /**
  * Created by johnli on 1/16/16.

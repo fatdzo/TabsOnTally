@@ -16,7 +16,7 @@ import com.tabsontally.markomarks.json.MetaDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
 import com.tabsontally.markomarks.model.Bill;
 import com.tabsontally.markomarks.model.Meta;
-import com.tabsontally.markomarks.tabsontally.BillItem;
+import com.tabsontally.markomarks.model.items.BillItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;

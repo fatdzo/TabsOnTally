@@ -3,20 +3,17 @@ package com.tabsontally.markomarks.RouteManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.tabsontally.markomarks.json.VoteDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
 import com.tabsontally.markomarks.model.Meta;
 import com.tabsontally.markomarks.model.Vote;
-import com.tabsontally.markomarks.tabsontally.VoteItem;
+import com.tabsontally.markomarks.model.items.VoteItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
