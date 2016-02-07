@@ -1,6 +1,6 @@
 package com.tabsontally.markomarks.model.items;
 
-import com.tabsontally.markomarks.RouteManager.LegislatorVotingOption;
+import com.tabsontally.markomarks.RouteManagerTemp.LegislatorVotingOption;
 
 import java.io.Serializable;
 import java.util.Date;
