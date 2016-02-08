@@ -3,14 +3,20 @@ package com.tabsontally.markomarks.model.items;
 /**
  * Created by MarkoPhillipMarkovic on 2/7/2016.
  */
-public class PageSizeItem {
-    private String mText;
-    private int mValue;
+public class PageSizeItem extends BaseItem {
 
-    public PageSizeItem()
+    private String mText;
+
+    public PageSizeItem(int value)
     {
-        mText = "NULL";
-        mValue = 10;
+        super(value);
+    }
+
+    @Override
+    public String getmText()
+    {
+        return String.valueOf(mValue) + " results";
+
     }
 
 }

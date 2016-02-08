@@ -8,7 +8,9 @@ import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -20,6 +22,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.tabsontally.markomarks.arrayadapters.BillPageSizeAdapter;
+import com.tabsontally.markomarks.model.items.PageSizeItem;
 import com.tabsontally.markomarks.routemanager.BillManager;
 import com.tabsontally.markomarks.routemanager.LegislatorVotingOption;
 import com.tabsontally.markomarks.routemanager.PeopleManager;
@@ -50,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private BillManager bllManager;
     private PeopleManager pplManager;
-    //private VoteManager vtManager;
     private ArrayList<VoteManager> vtManagerList = new ArrayList<>();
 
     private ListView billsListView;
@@ -165,6 +168,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private void getVoteItemList()
     {
+        CurrentPage = 1;
+        MaxPage = (int) Math.ceil((double) billList.size() / PageSize);
+        txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
+
         for(VoteManager vtManager: vtManagerList)
         {
             ArrayList<VoteItem> vItems = vtManager.getVoteItems();
@@ -205,12 +212,30 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         billList.add(temp);
                     }
                 }
-
-                billAdapter.notifyDataSetChanged();
             }
         }
+        Log.e("TABSONTALLY", "CHANGES TO THE MAXPAGE" + String.valueOf(MaxPage));
+        refreshListViewAndPaginate();
     }
 
+
+    private void refreshListViewAndPaginate()
+    {
+        if(CurrentPage > 0 && PageSize > 0 && billList.size() > 0)
+        {
+            int maxValue = CurrentPage * PageSize;
+            if(maxValue > billList.size() - 1)
+            {
+                maxValue = billList.size() - 1;
+            }
+
+            int minValue = (CurrentPage - 1) * PageSize;
+
+            billAdapter = new BillAdapter(context, new ArrayList<>(billList.subList(minValue, maxValue)));
+            billsListView.setAdapter(billAdapter);
+        }
+
+    }
 
 
 
@@ -262,14 +287,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = MainActivity.this;
-
-        Spinner spinner = (Spinner) findViewById(R.id.spinPageSize);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,R.array.bill_page_sizes, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        spinner.setAdapter(adapter);
 
         InitializeControls();
 
@@ -326,8 +343,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         billAdapter = new BillAdapter(context, billList);
         billsListView.setAdapter(billAdapter);
 
+
+
         txtCurrentPage = (TextView)findViewById(R.id.txt_currentPage);
-        txtCurrentPage.setText(String.valueOf(CurrentPage));
+        txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
 
         btn_NextPageButton = (Button)findViewById(R.id.btn_nextPage);
 
@@ -344,6 +363,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onClick(View v) {
 
                 CurrentPage = get5NextPages();
+                refreshListViewAndPaginate();
                 //bllManager.pullRecordPage(CurrentPage);
                 if (CurrentPage == MaxPage) {
                     btn_NextPageButton.setEnabled(false);
@@ -353,7 +373,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 btn_PrevPageButton.setEnabled(true);
                 btn_Prev5PagesButton.setEnabled(true);
 
-                txtCurrentPage.setText(String.valueOf(CurrentPage));
+                txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
             }
         });
 
@@ -361,6 +381,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 CurrentPage = getNextPage();
+                refreshListViewAndPaginate();
                 //bllManager.pullRecordPage(CurrentPage);
 
                 if(CurrentPage == MaxPage)
@@ -372,7 +393,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 btn_PrevPageButton.setEnabled(true);
                 btn_Prev5PagesButton.setEnabled(true);
 
-                txtCurrentPage.setText(String.valueOf(CurrentPage));
+                txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
             }
         });
 
@@ -381,6 +402,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 CurrentPage = getPrev5Pages();
+                refreshListViewAndPaginate();
                 //bllManager.pullRecordPage(CurrentPage);
                 if (CurrentPage == 1) {
                     btn_PrevPageButton.setEnabled(false);
@@ -390,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 btn_NextPageButton.setEnabled(true);
                 btn_Next5PagesButton.setEnabled(true);
 
-                txtCurrentPage.setText(String.valueOf(CurrentPage));
+                txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
             }
         });
 
@@ -398,6 +420,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 CurrentPage = getPreviousPage();
+                refreshListViewAndPaginate();
                 //bllManager.pullRecordPage(CurrentPage);
                 if(CurrentPage == 1)
                 {
@@ -408,7 +431,52 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 btn_NextPageButton.setEnabled(true);
                 btn_Next5PagesButton.setEnabled(true);
 
-                txtCurrentPage.setText(String.valueOf(CurrentPage));
+                txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
+            }
+        });
+
+
+        Spinner spinner = (Spinner) findViewById(R.id.spinPageSize);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayList<PageSizeItem> pageSizes = new ArrayList<>();
+        PageSizeItem temp10 = new PageSizeItem(10);
+        PageSizeItem temp20 = new PageSizeItem(20);
+        PageSizeItem temp50 = new PageSizeItem(50);
+        PageSizeItem temp100 = new PageSizeItem(100);
+        pageSizes.add(temp10);
+        pageSizes.add(temp20);
+        pageSizes.add(temp50);
+        pageSizes.add(temp100);
+        BillPageSizeAdapter pageSizeAdapter = new BillPageSizeAdapter(context, pageSizes);
+        spinner.setAdapter(pageSizeAdapter);
+
+        PageSize = 10;
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                PageSizeItem selected = (PageSizeItem)parent.getSelectedItem();
+                CurrentPage = 1;
+                PageSize = selected.getmvalue();
+                MaxPage = (int) Math.ceil((double) billList.size() / PageSize);
+
+                if (CurrentPage == 1) {
+                    btn_PrevPageButton.setEnabled(false);
+                    btn_Prev5PagesButton.setEnabled(false);
+                }
+
+                btn_NextPageButton.setEnabled(true);
+                btn_Next5PagesButton.setEnabled(true);
+
+                txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
+
+                refreshListViewAndPaginate();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
     }
