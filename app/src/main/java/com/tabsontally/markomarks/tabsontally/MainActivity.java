@@ -23,6 +23,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tabsontally.markomarks.arrayadapters.BillPageSizeAdapter;
+import com.tabsontally.markomarks.arrayadapters.BillSortOptionAdapter;
+import com.tabsontally.markomarks.model.items.BaseItem;
 import com.tabsontally.markomarks.model.items.PageSizeItem;
 import com.tabsontally.markomarks.routemanager.BillManager;
 import com.tabsontally.markomarks.routemanager.LegislatorVotingOption;
@@ -39,8 +41,16 @@ import com.tabsontally.markomarks.model.items.PersonItem;
 import com.tabsontally.markomarks.model.items.VoteItem;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
+
+    public static final int SORTBYDATE = 0;
+    public static final int SORTBYVOTE = 1;
+    public static final int SORTBYNAME = 2;
+
+    private int CurrentSort = SORTBYDATE;
 
     private Context context;
     private BillAdapter billAdapter;
@@ -231,7 +241,26 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             int minValue = (CurrentPage - 1) * PageSize;
 
-            billAdapter = new BillAdapter(context, new ArrayList<>(billList.subList(minValue, maxValue)));
+
+            if(CurrentSort == SORTBYDATE)
+            {
+                Collections.sort(billList, new UpdatedAtComparator());
+            }
+            if(CurrentSort == SORTBYNAME)
+            {
+                Collections.sort(billList, new TitleComparator());
+            }
+
+            if(CurrentSort == SORTBYVOTE)
+            {
+                Collections.sort(billList, new VoteComparator());
+            }
+
+
+            ArrayList<BillItem> resultList = new ArrayList<>(billList.subList(minValue, maxValue));
+
+
+            billAdapter = new BillAdapter(context, resultList);
             billsListView.setAdapter(billAdapter);
         }
 
@@ -456,7 +485,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                PageSizeItem selected = (PageSizeItem)parent.getSelectedItem();
+                PageSizeItem selected = (PageSizeItem) parent.getSelectedItem();
                 CurrentPage = 1;
                 PageSize = selected.getmvalue();
                 MaxPage = (int) Math.ceil((double) billList.size() / PageSize);
@@ -479,6 +508,37 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             }
         });
+
+
+        Spinner spinnerSort = (Spinner) findViewById(R.id.spinSort);
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayList<BaseItem> sortOptions = new ArrayList<>();
+        BaseItem dateSort = new BaseItem(SORTBYDATE,"by date");
+        BaseItem voteSort = new BaseItem(SORTBYVOTE, "by vote");
+        BaseItem nameSort = new BaseItem(SORTBYNAME, "by name");
+        sortOptions.add(dateSort);
+        sortOptions.add(voteSort);
+        sortOptions.add(nameSort);
+        BillSortOptionAdapter pageSortAdapter = new BillSortOptionAdapter(context, sortOptions);
+        spinnerSort.setAdapter(pageSortAdapter);
+
+        spinnerSort.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                BaseItem selected = (BaseItem) parent.getSelectedItem();
+
+                CurrentSort = selected.getmvalue();
+
+                refreshListViewAndPaginate();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
     }
 
     @Override
@@ -499,5 +559,35 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
+    }
+}
+
+
+class UpdatedAtComparator implements Comparator<BillItem> {
+
+    @Override
+    public int compare(BillItem e1, BillItem e2) {
+        return e2.UpdatedAt.compareTo(e1.UpdatedAt);
+    }
+}
+
+class TitleComparator implements Comparator<BillItem> {
+
+    @Override
+    public int compare(BillItem e1, BillItem e2) {
+        return e1.Title.compareTo(e2.Title);
+    }
+}
+
+class VoteComparator implements Comparator<BillItem> {
+
+    @Override
+    public int compare(BillItem e1, BillItem e2) {
+        if(e1.Votes.size() < e2.Votes.size())
+        {
+            return 1;
+        }
+
+        return -1;
     }
 }

@@ -3,6 +3,7 @@ package com.tabsontally.markomarks.model.items;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 
 /**
@@ -18,6 +19,7 @@ public class BillItem implements Serializable, Comparable<BillItem> {
     public ArrayList<VoteItem> Votes;
     public Date CreatedAt;
     public Date UpdatedAt;
+
 
     public
     BillItem()
