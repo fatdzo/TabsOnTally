@@ -15,8 +15,7 @@ public class BillDetail extends BaseData {
     private ArrayList<String> mSubjects;
     private ArrayList<DocumentObject> mDocuments;
 
-    public BillDetail(String id, String type, String title, Date updatedAt, String identifier, ArrayList<String> subjects, ArrayList<DocumentObject> documents)
-    {
+    public BillDetail(String id, String type, String title, Date updatedAt, String identifier, ArrayList<String> subjects, ArrayList<DocumentObject> documents) {
         super(id, type);
         mTitle = title;
         mUpdatedAt = updatedAt;
@@ -26,6 +25,25 @@ public class BillDetail extends BaseData {
 
     }
 
+    public String getmTitle() {
+        return mTitle;
+    }
+
+    public Date getmUpdatedAt() {
+        return mUpdatedAt;
+    }
+
+    public String getmIdentifier() {
+        return mIdentifier;
+    }
+
+    public ArrayList<String> getmSubjects() {
+        return mSubjects;
+    }
+
+    public ArrayList<DocumentObject> getmDocuments() {
+        return mDocuments;
 
 
+    }
 }
