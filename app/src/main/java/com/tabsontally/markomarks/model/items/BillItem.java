@@ -1,5 +1,9 @@
 package com.tabsontally.markomarks.model.items;
 
+import android.util.Log;
+
+import com.tabsontally.markomarks.routemanager.LegislatorVotingOption;
+
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -104,4 +108,5 @@ public class BillItem implements Serializable, Comparable<BillItem> {
 
         return areEqual;
     }
+
 }

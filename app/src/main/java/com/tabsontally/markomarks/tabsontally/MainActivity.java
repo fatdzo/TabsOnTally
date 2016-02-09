@@ -253,14 +253,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             if(CurrentSort == SORTBYVOTE)
             {
-                Collections.sort(billList, new VoteComparator());
+                Collections.sort(billList, new BillVotesComparator());
             }
 
 
             ArrayList<BillItem> resultList = new ArrayList<>(billList.subList(minValue, maxValue));
 
 
-            billAdapter = new BillAdapter(context, resultList);
+            billAdapter = new BillAdapter(context, resultList, CurrentPage, PageSize);
             billsListView.setAdapter(billAdapter);
         }
 
@@ -369,7 +369,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private void InitializeControls()
     {
         billsListView = (ListView)findViewById(R.id.lst_Bills);
-        billAdapter = new BillAdapter(context, billList);
+        billAdapter = new BillAdapter(context, billList, CurrentPage, PageSize);
         billsListView.setAdapter(billAdapter);
 
 
@@ -579,15 +579,14 @@ class TitleComparator implements Comparator<BillItem> {
     }
 }
 
-class VoteComparator implements Comparator<BillItem> {
+class BillVotesComparator implements Comparator<BillItem> {
 
     @Override
     public int compare(BillItem e1, BillItem e2) {
-        if(e1.Votes.size() < e2.Votes.size())
-        {
-            return 1;
-        }
-
+       if(e1.Votes.size() < e2.Votes.size())
+       {
+           return 1;
+       }
         return -1;
     }
 }

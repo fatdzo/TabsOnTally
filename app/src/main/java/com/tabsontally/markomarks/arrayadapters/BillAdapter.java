@@ -23,24 +23,21 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
 
     private Context ctx;
 
-    private ArrayList<BillItem> itemz;
     private ListView legVotesListview;
     private LegislatorVoteAdapter legVotesAdapter;
 
     private LinearLayout billView;
 
-    public BillAdapter(Context context, ArrayList<BillItem> items)
+    private int mCurrentPage = 1;
+    private int mCurrentPageSize = 10;
+
+    public BillAdapter(Context context, ArrayList<BillItem> items, int currentPage, int currentPageSize)
     {
         super(context, 0, items);
         ctx = context;
+        mCurrentPage = currentPage;
+        mCurrentPageSize = currentPageSize;
 
-        itemz = items;
-    }
-
-    public void setAdapterList(ArrayList<BillItem> bills)
-    {
-        itemz = bills;
-        notifyDataSetChanged();
     }
 
     @Override
@@ -65,7 +62,8 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
 
         // Lookup view for data population
         TextView billIndex = (TextView) convertView.findViewById(R.id.txt_BillIndex);
-        billIndex.setText(String.valueOf(position + 1) + ". ");
+        int index = (mCurrentPage - 1) * mCurrentPageSize + (position + 1);
+        billIndex.setText(String.valueOf(index) + ". ");
 
         TextView billName = (TextView) convertView.findViewById(R.id.txt_BillName);
         billName.setText(bill.Title);
