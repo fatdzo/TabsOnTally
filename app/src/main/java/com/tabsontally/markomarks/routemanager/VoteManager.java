@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.tabsontally.markomarks.model.APIConfig;
+import com.tabsontally.markomarks.model.LegislatorVotingOption;
 import com.tabsontally.markomarks.model.Meta;
 import com.tabsontally.markomarks.model.Vote;
 import com.tabsontally.markomarks.model.items.VoteItem;

@@ -1,7 +1,5 @@
 package com.tabsontally.markomarks.model;
 
-import com.tabsontally.markomarks.routemanager.LegislatorVotingOption;
-
 import java.util.Date;
 
 /**

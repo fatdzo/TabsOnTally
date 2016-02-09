@@ -1,4 +1,4 @@
-package com.tabsontally.markomarks.routemanager;
+package com.tabsontally.markomarks.model;
 
 /**
  * Created by MarkoPhillipMarkovic on 2/3/2016.

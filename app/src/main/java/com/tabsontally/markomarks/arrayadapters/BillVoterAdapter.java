@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.tabsontally.markomarks.routemanager.LegislatorVotingOption;
+import com.tabsontally.markomarks.model.LegislatorVotingOption;
 import com.tabsontally.markomarks.tabsontally.R;
 import com.tabsontally.markomarks.model.items.VoteItem;
 
