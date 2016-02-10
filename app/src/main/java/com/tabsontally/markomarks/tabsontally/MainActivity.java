@@ -41,12 +41,11 @@ import com.tabsontally.markomarks.model.items.VoteItem;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
 
     public static final int SORTBYDATE = 0;
-    public static final int SORTBYVOTE = 1;
+    public static final int SORTBYVOTES = 1;
     public static final int SORTBYNAME = 2;
 
     private int CurrentSort = SORTBYDATE;
@@ -250,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 Collections.sort(billList, BillItem.TitleComparator);
             }
 
-            if(CurrentSort == SORTBYVOTE)
+            if(CurrentSort == SORTBYVOTES)
             {
                 Collections.sort(billList, BillItem.BillVotesComparator);
             }
@@ -263,9 +262,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
 
     }
-
-
-
+    
     private int get5NextPages()
     {
         if(CurrentPage + 5 > MaxPage)
@@ -509,7 +506,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayList<BaseItem> sortOptions = new ArrayList<>();
         BaseItem dateSort = new BaseItem(SORTBYDATE,"by date");
-        BaseItem voteSort = new BaseItem(SORTBYVOTE, "by vote");
+        BaseItem voteSort = new BaseItem(SORTBYVOTES, "by votes");
         BaseItem nameSort = new BaseItem(SORTBYNAME, "by name");
         sortOptions.add(dateSort);
         sortOptions.add(voteSort);
@@ -538,11 +535,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
-        userLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-        if(userLocation!=null)
+        if(currentLocation!=null)
         {
-            pplManager.pullPeopleFromLatLong(userLocation.getLatitude(), userLocation.getLongitude());
+            if((userLocation != null && userLocation.getLatitude() != currentLocation.getLatitude() && userLocation.getLongitude() != currentLocation.getLongitude()) || userLocation == null)
+            {
+                userLocation = currentLocation;
+                pplManager.pullPeopleFromLatLong(userLocation.getLatitude(), userLocation.getLongitude());
+            }
+
         }
     }
 
