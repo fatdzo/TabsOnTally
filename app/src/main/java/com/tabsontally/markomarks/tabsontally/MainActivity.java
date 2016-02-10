@@ -243,18 +243,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             if(CurrentSort == SORTBYDATE)
             {
-                Collections.sort(billList, new UpdatedAtComparator());
+                Collections.sort(billList, BillItem.UpdatedAtComparator);
             }
             if(CurrentSort == SORTBYNAME)
             {
-                Collections.sort(billList, new TitleComparator());
+                Collections.sort(billList, BillItem.TitleComparator);
             }
 
             if(CurrentSort == SORTBYVOTE)
             {
-                Collections.sort(billList, new BillVotesComparator());
+                Collections.sort(billList, BillItem.BillVotesComparator);
             }
-
 
             ArrayList<BillItem> resultList = new ArrayList<>(billList.subList(minValue, maxValue));
 
@@ -555,34 +554,5 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
-    }
-}
-
-
-class UpdatedAtComparator implements Comparator<BillItem> {
-
-    @Override
-    public int compare(BillItem e1, BillItem e2) {
-        return e2.UpdatedAt.compareTo(e1.UpdatedAt);
-    }
-}
-
-class TitleComparator implements Comparator<BillItem> {
-
-    @Override
-    public int compare(BillItem e1, BillItem e2) {
-        return e1.Title.compareTo(e2.Title);
-    }
-}
-
-class BillVotesComparator implements Comparator<BillItem> {
-
-    @Override
-    public int compare(BillItem e1, BillItem e2) {
-       if(e1.Votes.size() < e2.Votes.size())
-       {
-           return 1;
-       }
-        return -1;
     }
 }
