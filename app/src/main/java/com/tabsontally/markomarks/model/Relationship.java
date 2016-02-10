@@ -3,7 +3,7 @@ package com.tabsontally.markomarks.model;
 /**
  * Created by MarkoPhillipMarkovic on 2/3/2016.
  */
-public class VoteRelationship {
+public class Relationship {
 
     private String mOrganizationId;
     private String mOrganizationType;
@@ -28,7 +28,7 @@ public class VoteRelationship {
         return mBillType;
     }
 
-    public VoteRelationship(String organizationId, String organizationType, String billId, String billType)
+    public Relationship(String organizationId, String organizationType, String billId, String billType)
     {
         mOrganizationId = organizationId;
         mOrganizationType = organizationType;

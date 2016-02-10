@@ -371,8 +371,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         billAdapter = new BillAdapter(context, billList, CurrentPage, PageSize);
         billsListView.setAdapter(billAdapter);
 
-
-
         txtCurrentPage = (TextView)findViewById(R.id.txt_currentPage);
         txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
 
@@ -507,7 +505,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             }
         });
-
 
         Spinner spinnerSort = (Spinner) findViewById(R.id.spinSort);
         // Create an ArrayAdapter using the string array and a default spinner layout

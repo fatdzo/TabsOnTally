@@ -8,8 +8,8 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
+import com.tabsontally.markomarks.model.Relationship;
 import com.tabsontally.markomarks.model.Vote;
-import com.tabsontally.markomarks.model.VoteRelationship;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -56,7 +56,7 @@ public class VoteDeserializer implements JsonDeserializer<Vote> {
         String organizationId = organizationRelationshipData.get("id").toString();
         String organizationType = organizationRelationshipData.get("type").toString();
 
-        VoteRelationship relationship = new VoteRelationship(organizationId, organizationType, billId, billType);
+        Relationship relationship = new Relationship(organizationId, organizationType, billId, billType);
 
         return new Vote(resultId, resultVote, updatedAtDate, relationship);
     }

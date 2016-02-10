@@ -15,9 +15,9 @@ public class Vote implements Comparable<Vote> {
     private Date mUpdated;
     private LegislatorVotingOption mPersonVoteOption;
 
-    private VoteRelationship mVoteRelationShip;
+    private Relationship mVoteRelationShip;
 
-    public VoteRelationship getmVoteRelationShip() {
+    public Relationship getmVoteRelationShip() {
         return mVoteRelationShip;
     }
 
@@ -71,7 +71,7 @@ public class Vote implements Comparable<Vote> {
     }
 
 
-    public Vote(String id, String result, Date updated, VoteRelationship relationsShip)
+    public Vote(String id, String result, Date updated, Relationship relationsShip)
     {
         mId = id;
         mResult = result;
