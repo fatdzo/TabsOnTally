@@ -3,6 +3,7 @@ package com.tabsontally.markomarks.routemanager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -39,13 +40,14 @@ public class VoteManager extends BaseRouteManager {
         mVotes = new HashMap<>();
         mUsePaging = true;
         mGson = gson;
+        switchState(IDLE);
     }
 
     //legislatorVoteOption - it can be Yes, No, Not voting
     public void pullRecords(final String personId, final String personName, LegislatorVotingOption legislatorVoteOption)
     {
         mCurrentPage = 1;
-        switchState(IDLE);
+        switchState(PULLING);
         pullRecordStep(mCurrentPage, personId, personName, legislatorVoteOption);
     }
 
@@ -89,11 +91,9 @@ public class VoteManager extends BaseRouteManager {
                             mCurrentPage = mMeta.Page + 1;
                             pullRecordStep(mMeta.Page + 1, personId, personName, legislatorVoteOption);
                         }
-                        else
-                        {
-                            switchState(FINISHED);
-                            return;
-                        }
+
+                        switchState(FINISHED);
+                        return;
                     }
                 });
 
@@ -177,7 +177,6 @@ public class VoteManager extends BaseRouteManager {
                 LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(mContext);
                 Intent pullSuccessBroadcastIntent = new Intent(PULL_SUCCESS);
                 broadcastManager.sendBroadcast(pullSuccessBroadcastIntent);
-                switchState(IDLE);
                 break;
         }
     }

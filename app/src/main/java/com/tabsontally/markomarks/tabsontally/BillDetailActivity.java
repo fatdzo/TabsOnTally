@@ -109,7 +109,7 @@ public class BillDetailActivity extends AppCompatActivity {
         };
 
         bllDetailManager = new BillDetailManager(context, tabsApi);
-        bllDetailManager.setmBillId(bll.Id);
+        bllDetailManager.setBillId(bll.Id);
         bllDetailManager.pullRecords();
 
     }

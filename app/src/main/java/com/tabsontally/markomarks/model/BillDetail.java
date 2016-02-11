@@ -46,4 +46,17 @@ public class BillDetail extends BaseData {
 
 
     }
+
+    @Override
+    public boolean equals(Object object)
+    {
+        boolean sameSame = false;
+
+        if (object != null && object instanceof BillDetail)
+        {
+            sameSame = this.getId().equals(((BillDetail) object).getId());
+        }
+
+        return sameSame;
+    }
 }

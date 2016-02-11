@@ -33,6 +33,10 @@ public class BillDetailManager extends BaseRouteManager {
         return billDetail;
     }
 
+    public String getmBillId() {
+        return mBillId;
+    }
+
     public BillDetailManager(Context context, APIConfig config) {
         super(context, config);
         mUsePaging = false;
@@ -41,10 +45,11 @@ public class BillDetailManager extends BaseRouteManager {
         gsonBuilder.registerTypeAdapter(BillDetail.class, new BillDetailDeserializer());
         final Gson gson = gsonBuilder.create();
         mGson = gson;
+        switchState(IDLE);
     }
 
 
-    public void setmBillId(String mBillId) {
+    public void setBillId(String mBillId) {
         this.mBillId = mBillId;
     }
 
@@ -60,7 +65,7 @@ public class BillDetailManager extends BaseRouteManager {
 
     public void pullRecords()
     {
-        switchState(IDLE);
+        switchState(PULLING);
         pullRecordStep(1);
     }
 
@@ -84,8 +89,6 @@ public class BillDetailManager extends BaseRouteManager {
                         }
 
                         billDetail = mGson.fromJson(result.getAsJsonObject("data"), BillDetail.class);
-
-                        Log.e("TABSONTALLY", "BILL DETAIL ->" + billDetail.getmTitle());
 
                         if(billDetail == null) {
                             switchState(FINISHED);
@@ -116,8 +119,18 @@ public class BillDetailManager extends BaseRouteManager {
                 LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(mContext);
                 Intent pullSuccessBroadcastIntent = new Intent(PULL_SUCCESS);
                 broadcastManager.sendBroadcast(pullSuccessBroadcastIntent);
-                switchState(IDLE);
                 break;
         }
+    }
+
+    @Override
+    public boolean equals(Object another)
+    {
+        boolean areEqual = false;
+        if (another != null && another instanceof BillDetailManager)
+        {
+            areEqual = this.getmBillId().equals(((BillDetailManager) another).getmBillId());
+        }
+        return areEqual;
     }
 }

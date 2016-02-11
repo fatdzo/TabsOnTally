@@ -32,8 +32,6 @@ public class BillDetailDeserializer  implements JsonDeserializer<BillDetail> {
         String resultId = data.get("id").toString();
         String resultType = data.get("type").toString();
 
-        Log.e("TABSONTALLY", "BILL DETAIL ->" + resultId);
-
         Map<String, Object> attr = (Map<String, Object>) data.get("attributes");
 
         String resultTitle = attr.get("title").toString();

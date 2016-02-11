@@ -37,6 +37,12 @@ public abstract class BaseRouteManager {
         mApiConfig = config;
     }
 
+    public boolean isManagerDoneLoading()
+    {
+        return mState == FINISHED;
+    }
+
+
     protected String getUrl(int page, boolean usePaging) {
         mUsePaging = usePaging;
 
