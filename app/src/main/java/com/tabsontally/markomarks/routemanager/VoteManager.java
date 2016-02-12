@@ -29,6 +29,10 @@ public class VoteManager extends BaseRouteManager {
     public static final String PULL_SUCCESS = "com.tabsontally.markomarks.votemanager.PULL SUCCESS";
     private static final String ROUTE = "votes/";
 
+
+
+    private String mPersonId;
+
     Meta mMeta = new Meta(1,1,0);
 
     private Gson mGson;
@@ -43,9 +47,14 @@ public class VoteManager extends BaseRouteManager {
         switchState(IDLE);
     }
 
+    public String getmPersonId() {
+        return mPersonId;
+    }
+
     //legislatorVoteOption - it can be Yes, No, Not voting
     public void pullRecords(final String personId, final String personName, LegislatorVotingOption legislatorVoteOption)
     {
+        mPersonId = personId;
         mCurrentPage = 1;
         switchState(PULLING);
         pullRecordStep(mCurrentPage, personId, personName, legislatorVoteOption);

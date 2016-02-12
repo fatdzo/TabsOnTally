@@ -3,7 +3,7 @@ package com.tabsontally.markomarks.model;
 import android.support.annotation.NonNull;
 
 
-
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -17,8 +17,8 @@ public class Person extends BaseData {
     String mSummary;
     String mNationalIdentity;
     String mBiography;
-    String mBirthdate;
-    String mDeathDate;
+    Date mBirthdate;
+    Date mDeathDate;
 
     Map<String, String> mExtra;
 
@@ -55,17 +55,17 @@ public class Person extends BaseData {
         return mBiography;
     }
 
-    public String getmBirthdate() {
+    public Date getmBirthdate() {
         return mBirthdate;
     }
 
-    public String getmDeathDate() {
+    public Date getmDeathDate() {
         return mDeathDate;
     }
 
     public Person(@NonNull String id, @NonNull String type, String name, String sortName,
                   String givenName, String imageUrl, String gender, String summary, String identity,
-                  String biography, String birthdate, String deathDate,
+                  String biography, Date birthdate, Date deathDate,
                   Map<String, String> extra) {
         super(id, type);
         mName = name;

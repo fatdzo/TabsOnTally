@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.drawable.Drawable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,12 +15,15 @@ import com.tabsontally.markomarks.arrayadapters.BillVoterAdapter;
 import com.tabsontally.markomarks.model.APIConfig;
 import com.tabsontally.markomarks.model.BillDetail;
 import com.tabsontally.markomarks.model.items.BillItem;
+import com.tabsontally.markomarks.model.items.PersonItem;
 import com.tabsontally.markomarks.model.items.VoteItem;
 import com.tabsontally.markomarks.routemanager.BillDetailManager;
 import com.tabsontally.markomarks.routemanager.BillManager;
 import com.tabsontally.markomarks.routemanager.PeopleManager;
 import com.tabsontally.markomarks.routemanager.VoteManager;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class BillDetailActivity extends AppCompatActivity {
@@ -44,7 +48,10 @@ public class BillDetailActivity extends AppCompatActivity {
                 case BillDetailManager.PULL_SUCCESS:
                 {
                     BillDetail detail = bllDetailManager.getBillDetail();
-                    billTitleView.setText(detail.getmTitle());
+                    if(detail != null)
+                    {
+                        billTitleView.setText(detail.getmTitle());
+                    }
 
                 }break;
             }
@@ -75,13 +82,15 @@ public class BillDetailActivity extends AppCompatActivity {
         BillItem bll = (BillItem)i.getSerializableExtra("BillItem");
         billVoteItems.addAll(bll.Votes);
 
+        ArrayList<PersonItem> personList = (ArrayList<PersonItem>) i.getSerializableExtra("PersonList");
+
         billTitleView = (TextView) findViewById(R.id.txt_BillDetailTitle);
         billTitleView.setText(bll.Title);
 
         billDescription = (TextView) findViewById(R.id.txt_BillDetailDescription);
         billDescription.setText(bll.getDescription());
 
-        billVoterAdapter = new BillVoterAdapter(context, billVoteItems);
+        billVoterAdapter = new BillVoterAdapter(context, billVoteItems, personList);
 
         //legVoteAdapter = new LegislatorVoteAdapter(ctx, bill.Votes);
 

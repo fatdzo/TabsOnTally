@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.tabsontally.markomarks.model.items.PersonItem;
 import com.tabsontally.markomarks.tabsontally.BillDetailActivity;
 import com.tabsontally.markomarks.model.items.BillItem;
 import com.tabsontally.markomarks.tabsontally.R;
@@ -31,14 +32,23 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
     private int mCurrentPage = 1;
     private int mCurrentPageSize = 10;
 
-    public BillAdapter(Context context, ArrayList<BillItem> items, int currentPage, int currentPageSize)
+    private ArrayList<PersonItem> mPersons;
+
+    public BillAdapter(Context context, ArrayList<BillItem> items, ArrayList<PersonItem> persons, int currentPage, int currentPageSize)
     {
         super(context, 0, items);
         ctx = context;
         mCurrentPage = currentPage;
         mCurrentPageSize = currentPageSize;
+        mPersons = persons;
 
     }
+
+    public void updatePersonList(ArrayList<PersonItem> newList)
+    {
+        mPersons = newList;
+    }
+
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -55,6 +65,7 @@ public class BillAdapter extends ArrayAdapter<BillItem> {
             public void onClick(View v) {
                 Intent intent = new Intent(ctx, BillDetailActivity.class);
                 intent.putExtra("BillItem", bill);
+                intent.putExtra("PersonList", mPersons);
                 //intent.putExtra(EXTRA_MESSAGE, message);
                 ctx.startActivity(intent);
             }

@@ -79,6 +79,7 @@ public class PeopleManager extends BaseRouteManager {
         {
             PersonItem temp = new PersonItem();
             temp.FullName = per.getmName();
+            temp.ImageUrl = per.getmImageUrl();
             temp.Id = per.getId();
             temp.Index = index;
             result.add(temp);

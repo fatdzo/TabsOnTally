@@ -1,6 +1,8 @@
 package com.tabsontally.markomarks.model.minor;
 
-public class ContactDetail {
+import java.io.Serializable;
+
+public class ContactDetail implements Serializable {
     String mLabel;
     String mType;
     String mValue;
