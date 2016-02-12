@@ -19,6 +19,7 @@ import com.koushikdutta.ion.Ion;
 import com.tabsontally.markomarks.model.LegislatorVotingOption;
 import com.tabsontally.markomarks.model.Person;
 import com.tabsontally.markomarks.model.items.PersonItem;
+import com.tabsontally.markomarks.model.minor.ContactDetail;
 import com.tabsontally.markomarks.tabsontally.R;
 import com.tabsontally.markomarks.model.items.VoteItem;
 
@@ -86,21 +87,24 @@ public class BillVoterAdapter extends ArrayAdapter<VoteItem> {
 
         PersonItem person = findPerson(vote.PersonId);
 
-        if(person != null && person.ImageUrl.length() > 0)
+        if(person != null )
         {
-            if(person.Details.getmContactDetails()!=null && person.Details.getmContactDetails().size() > 0)
+            if(person.ImageUrl.length() > 0)
             {
-                Log.e("TABSONTALLY", "GOT DETAILS " + person.Details.getmContactDetails().get(0));
+                Ion.with(legImage)
+                        .placeholder(R.drawable.places_ic_clear)
+                        .smartSize(false)
+                        .load(person.ImageUrl);
+            }
+            Log.e("TABSONTALLY", "HAVE CONTACT DETAIL START ______");
+            if(person.Details!=null)
+            {
+                for(ContactDetail cd: person.Details.getmContactDetails())
+                {
+                    Log.e("TABSONTALLY", "HAVE CONTACT DETAIL" + cd.getmType());
+                }
             }
 
-            Log.e("TABSONTALLY", "GOT IMAGE " + person.ImageUrl );
-
-
-
-            Ion.with(legImage)
-                    .placeholder(R.drawable.places_ic_clear)
-                    .smartSize(false)
-                    .load(person.ImageUrl);
 
         }
 

@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     break;
                 }
                 case PersonDetailsManager.PULL_SUCCESS:{
+
                     for(PersonDetailsManager pdm: personDetailManagerList)
                     {
                         for(PersonItem p: personList)

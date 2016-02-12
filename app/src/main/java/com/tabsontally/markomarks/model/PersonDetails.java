@@ -9,6 +9,8 @@ import java.util.ArrayList;
  * Created by MarkoPhillipMarkovic on 2/11/2016.
  */
 public class PersonDetails implements Serializable{
+
+
     public ArrayList<ContactDetail> getmContactDetails() {
         return mContactDetails;
     }
