@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -59,22 +60,52 @@ public class PersonDetailsDeserializer implements JsonDeserializer<PersonDetails
 
 
         String name = attr.get("name").toString();
-        String imageUrl = attr.get("image").toString();
         String sortName = attr.get("sort_name").toString();
         String familyName = attr.get("family_name").toString();
         String givenName = attr.get("given_name").toString();
+        String imageUrl = attr.get("image").toString();
         String gender = attr.get("gender").toString();
         String summary = attr.get("summary").toString();
         String nationalIdentity = attr.get("national_identity").toString();
         String biography = attr.get("biography").toString();
 
-
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
 
         String birthDateString = attr.get("birth_date").toString();
+        String deathDateString = attr.get("death_date").toString();
 
+        Date birthDate = new Date();
+        try
+        {
+            birthDate = formatter.parse(birthDateString);
+        }
+        catch (ParseException e){
 
-        PersonDetails personDetails = new PersonDetails(resultId, resultType, contactDetails, imageUrl);
+        }
+
+        Date deathDate = new Date();
+        try
+        {
+            deathDate = formatter.parse(deathDateString);
+        }
+        catch (ParseException e){
+
+        }
+
+        PersonDetails personDetails = new PersonDetails(resultId,
+                resultType,
+                name,
+                sortName,
+                familyName,
+                givenName,
+                gender,
+                summary,
+                nationalIdentity,
+                biography,
+                birthDate,
+                deathDate,
+                contactDetails,
+                imageUrl );
 
         return personDetails;
     }

@@ -17,6 +17,7 @@
             android:layout_height="match_parent"
             android:layout_weight="0.2"
             android:gravity="center"
+            android:textStyle="bold"
             android:text="Note"/>
         <TextView
             android:id="@+id/txt_contactDetail_type"
@@ -25,7 +26,8 @@
             android:linksClickable="true"
             android:layout_weight="0.2"
             android:gravity="center"
-            android:text="Value"/>
+            android:textStyle="italic"
+            android:text="Type"/>
         <TextView
             android:id="@+id/txt_contactDetail_value"
             android:layout_width="0dp"

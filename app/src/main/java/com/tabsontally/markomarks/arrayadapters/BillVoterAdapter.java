@@ -41,9 +41,12 @@ public class BillVoterAdapter extends ArrayAdapter<VoteItem> {
 
     ArrayList<PersonItem> mPersons;
     ImageView legImage;
+    ImageView contactDetailImage;
+    TextView contactDetailName;
 
     Dialog contactDetailsDialog;
     ContactDetailsAdapter contactDetailsAdapter;
+
 
     ListView lst_contactDetails;
 
@@ -60,11 +63,8 @@ public class BillVoterAdapter extends ArrayAdapter<VoteItem> {
         // custom dialog
         contactDetailsDialog = new Dialog(ctx);
         contactDetailsDialog.setContentView(R.layout.dialog_billdetails_contactinfo);
-        contactDetailsDialog.setTitle("ContactDetails");
+        contactDetailsDialog.setTitle("Contact Details");
 
-        // set the custom dialog components - text, image and button
-        //TextView text = (TextView) contactDetailsDialog.findViewById(R.id.txt_BillDetailVoterName);
-        //text.setText("Android custom dialog example!");
 
         Button dialogButton = (Button) contactDetailsDialog.findViewById(R.id.btn_contactDetails_closeDialog);
         // if button is clicked, close the custom dialog
@@ -129,16 +129,9 @@ public class BillVoterAdapter extends ArrayAdapter<VoteItem> {
 
             if(person.Details!=null)
             {
-                for(ContactDetail cd: person.Details.getmContactDetails())
-                {
-                    Log.e("TABSONTALLY", "HAVE CONTACT DETAIL" + cd.getmType());
-                }
+                contactDetailsAdapter = new ContactDetailsAdapter(ctx, person.Details.getmContactDetails());
+                lst_contactDetails.setAdapter(contactDetailsAdapter);
             }
-
-
-            contactDetailsAdapter = new ContactDetailsAdapter(ctx, person.Details.getmContactDetails());
-            lst_contactDetails.setAdapter(contactDetailsAdapter);
-
         }
 
 
@@ -161,8 +154,26 @@ public class BillVoterAdapter extends ArrayAdapter<VoteItem> {
         btnContact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                contactDetailsAdapter = new ContactDetailsAdapter(ctx, person.Details.getmContactDetails());
-                lst_contactDetails.setAdapter(contactDetailsAdapter);
+
+                contactDetailImage = (ImageView)contactDetailsDialog.findViewById(R.id.img_contactDetailImage);
+
+                if(person.ImageUrl.length() > 0)
+                {
+                    Ion.with(contactDetailImage)
+                            .placeholder(R.drawable.places_ic_clear)
+                            .smartSize(false)
+                            .load(person.ImageUrl);
+                }
+
+                if(person.Details!=null)
+                {
+                    contactDetailName = (TextView)contactDetailsDialog.findViewById(R.id.txt_contactDetailName);
+                    contactDetailName.setText(person.Details.getmName());
+
+                    contactDetailsAdapter = new ContactDetailsAdapter(ctx, person.Details.getmContactDetails());
+                    lst_contactDetails.setAdapter(contactDetailsAdapter);
+                }
+
                 contactDetailsDialog.show();
             }
         });

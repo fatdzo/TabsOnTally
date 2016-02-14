@@ -2,8 +2,10 @@ package com.tabsontally.markomarks.model;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 
-public class BaseData {
+
+public class BaseData implements Serializable{
     private String mId;
     private String mType;
 

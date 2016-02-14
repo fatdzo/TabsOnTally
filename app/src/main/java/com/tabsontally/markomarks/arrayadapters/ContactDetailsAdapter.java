@@ -24,6 +24,7 @@ public class ContactDetailsAdapter extends ArrayAdapter<ContactDetail> {
     TextView contactValue;
     TextView contactNote;
     TextView txt_contactType;
+
     public ContactDetailsAdapter(Context context, ArrayList<ContactDetail> contactDetails)
     {
         super(context, 0, contactDetails);
@@ -39,10 +40,26 @@ public class ContactDetailsAdapter extends ArrayAdapter<ContactDetail> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.contactinfo_item, parent, false);
         }
 
-
         // Lookup view for data population
         contactNote = (TextView) convertView.findViewById(R.id.txt_contactDetail_note);
 
+        handleContactNoteGroupNames(position, contact);
+
+        txt_contactType = (TextView) convertView.findViewById(R.id.txt_contactDetail_type);
+
+        contactValue = (TextView) convertView.findViewById(R.id.txt_contactDetail_value);
+        adjustContactTypeString(contact.getmType());
+        setContactValueAutoLinkMask(contact.getmType());
+        contactValue.setLinksClickable(true);
+        contactValue.setClickable(true);
+
+        contactValue.setText(contact.getmValue());
+
+        return convertView;
+    }
+
+    public void handleContactNoteGroupNames(int position, ContactDetail contact)
+    {
         if(position > 0)
         {
             ContactDetail previousContact = getItem(position - 1);
@@ -59,19 +76,8 @@ public class ContactDetailsAdapter extends ArrayAdapter<ContactDetail> {
         {
             contactNote.setText(contact.getmNote());
         }
-
-        txt_contactType = (TextView) convertView.findViewById(R.id.txt_contactDetail_type);
-
-        contactValue = (TextView) convertView.findViewById(R.id.txt_contactDetail_value);
-        adjustContactTypeString(contact.getmType());
-        setContactValueAutoLinkMask(contact.getmType());
-        contactValue.setLinksClickable(true);
-        contactValue.setClickable(true);
-
-        contactValue.setText(contact.getmValue());
-
-        return convertView;
     }
+
 
     public void adjustContactTypeString(String contactType)
     {
