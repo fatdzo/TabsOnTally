@@ -10,7 +10,7 @@ public class ContactDetail implements Serializable {
     String mNote;
 
     public String getmValue() {
-        return mValue;
+        return mValue.replace("\\n", "\n").replace("\"", "");
     }
 
     public String getmLabel() {
@@ -18,11 +18,11 @@ public class ContactDetail implements Serializable {
     }
 
     public String getmType() {
-        return mType;
+        return mType.replace("\"", "");
     }
 
     public String getmNote() {
-        return mNote;
+        return mNote.replace("\"", "");
     }
 
     public ContactDetail(String label, String type, String value, String note) {

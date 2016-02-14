@@ -1,5 +1,6 @@
 package com.tabsontally.markomarks.arrayadapters;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -40,13 +42,39 @@ public class BillVoterAdapter extends ArrayAdapter<VoteItem> {
     ArrayList<PersonItem> mPersons;
     ImageView legImage;
 
+    Dialog contactDetailsDialog;
+    ContactDetailsAdapter contactDetailsAdapter;
+
+    ListView lst_contactDetails;
+
     public BillVoterAdapter(Context context, ArrayList<VoteItem> votes, ArrayList<PersonItem> persons)
     {
         super(context, 0, votes);
         ctx = context;
         mPersons = persons;
+        initializeContactDialog();
     }
 
+    public void initializeContactDialog()
+    {
+        // custom dialog
+        contactDetailsDialog = new Dialog(ctx);
+        contactDetailsDialog.setContentView(R.layout.dialog_billdetails_contactinfo);
+        contactDetailsDialog.setTitle("ContactDetails");
+
+        // set the custom dialog components - text, image and button
+        //TextView text = (TextView) contactDetailsDialog.findViewById(R.id.txt_BillDetailVoterName);
+        //text.setText("Android custom dialog example!");
+
+        Button dialogButton = (Button) contactDetailsDialog.findViewById(R.id.btn_contactDetails_closeDialog);
+        // if button is clicked, close the custom dialog
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                contactDetailsDialog.dismiss();
+            }
+        });
+    }
 
     public PersonItem findPerson(String personId)
     {
@@ -60,6 +88,7 @@ public class BillVoterAdapter extends ArrayAdapter<VoteItem> {
 
         return null;
     }
+
 
 
     @Override
@@ -85,8 +114,9 @@ public class BillVoterAdapter extends ArrayAdapter<VoteItem> {
         legImage = (ImageView) convertView.findViewById(R.id.img_BillDetailVoterImage);
         legImage.setImageResource(R.drawable.places_ic_search);
 
-        PersonItem person = findPerson(vote.PersonId);
+        final PersonItem person = findPerson(vote.PersonId);
 
+        lst_contactDetails = (ListView)contactDetailsDialog.findViewById(R.id.lst_ContactDetails);
         if(person != null )
         {
             if(person.ImageUrl.length() > 0)
@@ -96,7 +126,7 @@ public class BillVoterAdapter extends ArrayAdapter<VoteItem> {
                         .smartSize(false)
                         .load(person.ImageUrl);
             }
-            Log.e("TABSONTALLY", "HAVE CONTACT DETAIL START ______");
+
             if(person.Details!=null)
             {
                 for(ContactDetail cd: person.Details.getmContactDetails())
@@ -105,6 +135,9 @@ public class BillVoterAdapter extends ArrayAdapter<VoteItem> {
                 }
             }
 
+
+            contactDetailsAdapter = new ContactDetailsAdapter(ctx, person.Details.getmContactDetails());
+            lst_contactDetails.setAdapter(contactDetailsAdapter);
 
         }
 
@@ -121,6 +154,19 @@ public class BillVoterAdapter extends ArrayAdapter<VoteItem> {
         {
             billVoteLay.setBackgroundColor(Color.BLUE);
         }
+
+
+        Button btnContact = (Button)convertView.findViewById(R.id.btn_Contact);
+
+        btnContact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                contactDetailsAdapter = new ContactDetailsAdapter(ctx, person.Details.getmContactDetails());
+                lst_contactDetails.setAdapter(contactDetailsAdapter);
+                contactDetailsDialog.show();
+            }
+        });
+
 
 
         return convertView;
