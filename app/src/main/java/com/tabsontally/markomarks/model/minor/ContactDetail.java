@@ -5,12 +5,11 @@ import java.io.Serializable;
 public class ContactDetail implements Serializable {
     String mLabel;
     String mType;
-
     String mValue;
     String mNote;
 
     public String getmValue() {
-        return mValue.replace("\\n", "\n").replace("\"", "");
+        return mValue;
     }
 
     public String getmLabel() {
@@ -18,11 +17,11 @@ public class ContactDetail implements Serializable {
     }
 
     public String getmType() {
-        return mType.replace("\"", "");
+        return mType;
     }
 
     public String getmNote() {
-        return mNote.replace("\"", "");
+        return mNote;
     }
 
     public ContactDetail(String label, String type, String value, String note) {

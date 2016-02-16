@@ -15,7 +15,6 @@ public class BillItem implements Serializable, Comparable<BillItem> {
     public int Index;
     public String Description;
     public String Id;
-
     public ArrayList<VoteItem> Votes;
     public Date CreatedAt;
     public Date UpdatedAt;

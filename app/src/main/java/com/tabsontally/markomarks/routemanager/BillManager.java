@@ -55,7 +55,7 @@ public class BillManager  extends BaseRouteManager {
         //pullRecords(mCurrentPage);
     }
 
-    public ArrayList<BillItem> getBillItemList()
+    /*public ArrayList<BillItem> getBillItemList()
     {
         ArrayList<BillItem> result = new ArrayList<>();
 
@@ -78,7 +78,7 @@ public class BillManager  extends BaseRouteManager {
         }
 
         return result;
-    }
+    }*/
 
 
     @Override

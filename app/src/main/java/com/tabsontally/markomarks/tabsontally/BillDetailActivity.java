@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.drawable.Drawable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,12 +17,7 @@ import com.tabsontally.markomarks.model.items.BillItem;
 import com.tabsontally.markomarks.model.items.PersonItem;
 import com.tabsontally.markomarks.model.items.VoteItem;
 import com.tabsontally.markomarks.routemanager.BillDetailManager;
-import com.tabsontally.markomarks.routemanager.BillManager;
-import com.tabsontally.markomarks.routemanager.PeopleManager;
-import com.tabsontally.markomarks.routemanager.VoteManager;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 
 public class BillDetailActivity extends AppCompatActivity {
@@ -35,10 +29,15 @@ public class BillDetailActivity extends AppCompatActivity {
 
     LocalBroadcastManager broadcastManager;
 
-    TextView billTitleView;
-    TextView billDescription;
+    TextView txtBillTitleView;
+    TextView txtBillDescription;
+
+    TextView txtbillIdentifier;
 
     BillDetailManager bllDetailManager;
+
+    BillItem billSource;
+    BillDetail billDetail;
 
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -47,10 +46,11 @@ public class BillDetailActivity extends AppCompatActivity {
             switch (action) {
                 case BillDetailManager.PULL_SUCCESS:
                 {
-                    BillDetail detail = bllDetailManager.getBillDetail();
-                    if(detail != null)
+                    billDetail = bllDetailManager.getBillDetail();
+                    if(billDetail != null)
                     {
-                        billTitleView.setText(detail.getmTitle());
+                        txtBillTitleView.setText(billDetail.getmTitle());
+                        txtbillIdentifier.setText(billDetail.getmIdentifier());
                     }
 
                 }break;
@@ -69,7 +69,6 @@ public class BillDetailActivity extends AppCompatActivity {
         IntentFilter filter = new IntentFilter();
         filter.addAction(BillDetailManager.PULL_SUCCESS);
         broadcastManager.registerReceiver(mBroadcastReceiver, filter);
-
         initializeControls();
 
 
@@ -79,16 +78,19 @@ public class BillDetailActivity extends AppCompatActivity {
     {
         Intent i = getIntent();
 
-        BillItem bll = (BillItem)i.getSerializableExtra("BillItem");
-        billVoteItems.addAll(bll.Votes);
+        billSource = (BillItem)i.getSerializableExtra("BillItem");
+
+        billVoteItems.addAll(billSource.Votes);
 
         ArrayList<PersonItem> personList = (ArrayList<PersonItem>) i.getSerializableExtra("PersonList");
 
-        billTitleView = (TextView) findViewById(R.id.txt_BillDetailTitle);
-        billTitleView.setText(bll.Title);
+        txtBillTitleView = (TextView) findViewById(R.id.txt_BillDetailTitle);
+        txtBillTitleView.setText(billSource.Title);
 
-        billDescription = (TextView) findViewById(R.id.txt_BillDetailDescription);
-        billDescription.setText(bll.getDescription());
+        txtBillDescription = (TextView) findViewById(R.id.txt_BillDetailDescription);
+        txtBillDescription.setText(billSource.getDescription());
+
+        txtbillIdentifier = (TextView) findViewById(R.id.txt_BillDetailIdentifier);
 
         billVoterAdapter = new BillVoterAdapter(context, billVoteItems, personList);
 
@@ -118,7 +120,7 @@ public class BillDetailActivity extends AppCompatActivity {
         };
 
         bllDetailManager = new BillDetailManager(context, tabsApi);
-        bllDetailManager.setBillId(bll.Id);
+        bllDetailManager.setBillId(billSource.Id);
         bllDetailManager.pullRecords();
 
     }

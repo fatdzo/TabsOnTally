@@ -7,6 +7,18 @@ import java.util.Date;
  * Created by MarkoPhillipMarkovic on 1/24/2016.
  */
 public class DocumentObject {
+    public String getmNote() {
+        return mNote;
+    }
+
+    public ArrayList<String> getmLinks() {
+        return mLinks;
+    }
+
+    public Date getmDate() {
+        return mDate;
+    }
+
     private String mNote;
     private ArrayList<String> mLinks;
     private Date mDate;
