@@ -25,13 +25,10 @@ import java.util.Map;
 public class PersonDetailsDeserializer implements JsonDeserializer<PersonDetails> {
     @Override
     public PersonDetails deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        Gson gson = new Gson();
-        Type type = new TypeToken<Map<String, Object>>(){}.getType();
-        Map<String, Object> data = gson.fromJson(json, type);
-        String resultType = (String) data.get("type");
-        String resultId = (String) data.get("id");
-
         JsonObject jObject = json.getAsJsonObject();
+        String resultType = jObject.get("type").getAsString();
+        String resultId = jObject.get("id").getAsString();
+
         JsonObject attrObject = jObject.get("attributes").getAsJsonObject();
         JsonArray jsonContactArray = attrObject.get("contact_details").getAsJsonArray();
 
