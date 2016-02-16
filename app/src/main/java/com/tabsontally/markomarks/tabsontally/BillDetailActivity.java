@@ -34,6 +34,9 @@ public class BillDetailActivity extends AppCompatActivity {
 
     TextView txtbillIdentifier;
 
+    TextView txtBillSubjects;
+    TextView txtBillDates;
+
     BillDetailManager bllDetailManager;
 
     BillItem billSource;
@@ -51,6 +54,10 @@ public class BillDetailActivity extends AppCompatActivity {
                     {
                         txtBillTitleView.setText(billDetail.getmTitle());
                         txtbillIdentifier.setText(billDetail.getIdentifier());
+
+                        txtBillDates.setText(billDetail.getDatesString());
+                        txtBillSubjects.setText(billDetail.getSubjectsString());
+                        txtBillDescription.setText(billDetail.getDescription());
                     }
 
                 }break;
@@ -88,9 +95,9 @@ public class BillDetailActivity extends AppCompatActivity {
         txtBillTitleView.setText(billSource.Title);
 
         txtBillDescription = (TextView) findViewById(R.id.txt_BillDetailDescription);
-        txtBillDescription.setText(billSource.getDescription());
-
         txtbillIdentifier = (TextView) findViewById(R.id.txt_BillDetailIdentifier);
+        txtBillSubjects = (TextView) findViewById(R.id.txt_BillDetailSubjects);
+        txtBillDates = (TextView) findViewById(R.id.txt_BillDetailDates);
 
         billVoterAdapter = new BillVoterAdapter(context, billVoteItems, personList);
 

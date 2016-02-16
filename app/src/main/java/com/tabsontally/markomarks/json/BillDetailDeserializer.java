@@ -41,9 +41,17 @@ public class BillDetailDeserializer  implements JsonDeserializer<BillDetail> {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
 
         String updatedString = attrObject.get("updated_at").getAsString();
-        Date updatedAtDate = new Date();
+        Date updatedAtDate = null;
         try {
             updatedAtDate = formatter.parse(updatedString);
+        } catch (ParseException e) {
+
+        }
+
+        String createdString = attrObject.get("created_at").getAsString();
+        Date createdAtDate = null;
+        try {
+            createdAtDate = formatter.parse(createdString);
         } catch (ParseException e) {
 
         }
@@ -113,7 +121,7 @@ public class BillDetailDeserializer  implements JsonDeserializer<BillDetail> {
                 String lnkMediaType = lnk.get("media_type").getAsString();
                 String lnkUrl = lnk.get("url").getAsString();
 
-                Log.e("TABSONTALLY", "GOT DOCUMENT LINK->" + lnkUrl);
+                Log.e("TABSONTALLY", "GOT VERSION LINK->" + lnkUrl  + " - - " + lnkText.length());
 
                 LinkObject temp = new LinkObject(lnkText,lnkUrl,lnkMediaType);
                 versionLinks.add(temp);
@@ -132,7 +140,16 @@ public class BillDetailDeserializer  implements JsonDeserializer<BillDetail> {
             subjects.add(sub);
         }
 
-        BillDetail result = new BillDetail(resultId,resultType, resultTitle, updatedAtDate, resultIdentifier, subjects, resultDocuments, resultVersions);
+        BillDetail result = new BillDetail(
+                resultId,
+                resultType,
+                resultTitle,
+                createdAtDate,
+                updatedAtDate,
+                resultIdentifier,
+                subjects,
+                resultDocuments,
+                resultVersions);
 
         return result;
     }
