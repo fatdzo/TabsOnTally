@@ -15,13 +15,16 @@ public class BillDetail extends BaseData {
     private ArrayList<String> mSubjects;
     private ArrayList<DocumentObject> mDocuments;
 
-    public BillDetail(String id, String type, String title, Date updatedAt, String identifier, ArrayList<String> subjects, ArrayList<DocumentObject> documents) {
+    ArrayList<VersionObject> mVersions;
+
+    public BillDetail(String id, String type, String title, Date updatedAt, String identifier, ArrayList<String> subjects, ArrayList<DocumentObject> documents, ArrayList<VersionObject> versions) {
         super(id, type);
         mTitle = title;
         mUpdatedAt = updatedAt;
         mIdentifier = identifier;
         mSubjects = subjects;
         mDocuments = documents;
+        mVersions = versions;
 
     }
 
@@ -29,22 +32,24 @@ public class BillDetail extends BaseData {
         return mTitle;
     }
 
-    public Date getmUpdatedAt() {
+    public Date getUpdatedAt() {
         return mUpdatedAt;
     }
 
-    public String getmIdentifier() {
+    public String getIdentifier() {
         return mIdentifier;
     }
 
-    public ArrayList<String> getmSubjects() {
+    public ArrayList<String> getSubjects() {
         return mSubjects;
     }
 
-    public ArrayList<DocumentObject> getmDocuments() {
+    public ArrayList<VersionObject> getVersions() {
+        return mVersions;
+    }
+
+    public ArrayList<DocumentObject> getDocuments() {
         return mDocuments;
-
-
     }
 
     @Override

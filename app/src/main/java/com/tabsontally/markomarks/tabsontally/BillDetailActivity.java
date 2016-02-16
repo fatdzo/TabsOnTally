@@ -50,7 +50,7 @@ public class BillDetailActivity extends AppCompatActivity {
                     if(billDetail != null)
                     {
                         txtBillTitleView.setText(billDetail.getmTitle());
-                        txtbillIdentifier.setText(billDetail.getmIdentifier());
+                        txtbillIdentifier.setText(billDetail.getIdentifier());
                     }
 
                 }break;
