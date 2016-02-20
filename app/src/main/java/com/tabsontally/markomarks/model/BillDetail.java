@@ -2,6 +2,7 @@ package com.tabsontally.markomarks.model;
 
 import android.util.Log;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,14 +10,14 @@ import java.util.Date;
 /**
  * Created by MarkoPhillipMarkovic on 1/24/2016.
  */
-public class BillDetail extends BaseData {
+public class BillDetail extends BaseData implements Serializable {
 
     private String mTitle;
     private Date mUpdatedAt;
     private Date mCreatedAt;
     private String mIdentifier;
     private ArrayList<String> mSubjects;
-    private ArrayList<DocumentObject> mDocuments;
+    private transient  ArrayList<DocumentObject> mDocuments;
 
     ArrayList<VersionObject> mVersions;
 
@@ -32,7 +33,7 @@ public class BillDetail extends BaseData {
 
     }
 
-    public String getmTitle() {
+    public String getTitle() {
         return mTitle;
     }
 
@@ -88,7 +89,6 @@ public class BillDetail extends BaseData {
             result += sub + ", ";
         }
 
-        Log.e("TABSONTALLY", "GET SUBJECTS STRING ->" + result);
         if(result.length() > 2)
         {
             return result.substring(0, result.length() - 2);

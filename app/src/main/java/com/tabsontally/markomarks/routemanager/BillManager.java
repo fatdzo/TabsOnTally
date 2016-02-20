@@ -67,7 +67,7 @@ public class BillManager  extends BaseRouteManager {
         for(Bill bll: billList)
         {
             BillItem b = new BillItem();
-            b.Title = bll.getmTitle().trim();
+            b.Title = bll.getTitle().trim();
             b.Id = bll.getId();
             b.Index = (mCurrentPage - 1) * PAGE_SIZE + index;
             b.Description = "";

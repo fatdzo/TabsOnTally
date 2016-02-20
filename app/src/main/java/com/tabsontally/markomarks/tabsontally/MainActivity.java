@@ -23,8 +23,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tabsontally.markomarks.arrayadapters.BillPageSizeAdapter;
 import com.tabsontally.markomarks.arrayadapters.BillSortOptionAdapter;
+import com.tabsontally.markomarks.model.BillDetail;
+import com.tabsontally.markomarks.model.db.BillDetailDB;
+import com.tabsontally.markomarks.model.dbManager.BillDetailsDataManager;
 import com.tabsontally.markomarks.model.items.BaseItem;
 import com.tabsontally.markomarks.model.items.PageSizeItem;
+import com.tabsontally.markomarks.routemanager.BillDetailManager;
 import com.tabsontally.markomarks.routemanager.BillManager;
 import com.tabsontally.markomarks.model.LegislatorVotingOption;
 import com.tabsontally.markomarks.routemanager.PeopleManager;
@@ -57,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     GoogleApiClient mGoogleApiClient;
 
     private ArrayList<BillItem> billList = new ArrayList<>();
+    private ArrayList<BillDetailManager> dbBillDetailManagers = new ArrayList<>();
+
     private ArrayList<PersonItem> personList = new ArrayList<>();
 
     private APIConfig tabsApi;
@@ -65,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private PeopleManager pplManager;
     private ArrayList<VoteManager> vtManagerList = new ArrayList<>();
     private ArrayList<PersonDetailsManager> personDetailManagerList = new ArrayList<>();
+
+    BillDetailsDataManager billDetailsDataManager = new BillDetailsDataManager();
 
     private ListView billsListView;
 
@@ -145,6 +153,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                     break;
                 }
+                case BillDetailManager.PULL_SUCCESS:{
+                    for(BillDetailManager bdm: dbBillDetailManagers)
+                    {
+                        if(!bdm.isManagerDone())
+                        {
+                            BillDetail billDetail = bdm.getBillDetail();
+                            if(billDetail != null)
+                            {
+                                for(BillItem b : billList)
+                                {
+                                    if(b.Id.equals(billDetail.getId()))
+                                    {
+                                        updateBillItemFromBillDetailDb(b, billDetailsDataManager.convertToBillDetailDB(billDetail));
+                                        billDetailsDataManager.addBillDetailToContent(context, billDetail);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    billAdapter.notifyDataSetChanged();
+
+                }break;
                 case BillManager.PULL_SUCCESS: {
                     /*billList.clear();
                     billList.addAll(bllManager.getBillItemList());
@@ -183,6 +214,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         }
     };
+
+    private void updateBillItemFromBillDetailDb(BillItem billItem, BillDetailDB detail)
+    {
+        billItem.Title = detail.getTitle();
+    }
+
 
     private boolean personDetailsManageListContainsPersonId(String personId)
     {
@@ -234,8 +271,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         for(VoteManager vtManager: vtManagerList)
         {
             ArrayList<VoteItem> vItems = vtManager.getVoteItems();
-            if(vItems.size() > 0)
-            {
+            if(vItems.size() > 0) {
                 for(VoteItem v: vItems)
                 {
                     int foundBillIndex = billListContainsBillId(v.BillId);
@@ -265,6 +301,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         BillItem temp = new BillItem();
                         temp.Id = v.BillId;
                         temp.Title = v.BillId;
+                        BillDetailDB bd = getBillDetailFromContent(v.BillId);
+
+                        if(bd != null)
+                        {
+                            updateBillItemFromBillDetailDb(temp, bd);
+                            //TODO: load more data for the bill item
+                        }
                         temp.UpdatedAt = v.Updated;
                         temp.Votes.add(v);
                         temp.Index = billList.size() + 1;
@@ -274,6 +317,25 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             }
         }
         refreshListViewAndPaginate();
+    }
+
+
+    private BillDetailDB getBillDetailFromContent(String billId)
+    {
+        BillDetailDB foundBd = billDetailsDataManager.findDetailDbById(billId);
+
+        if(foundBd != null)
+        {
+            return foundBd;
+        }
+
+        //No Results found time to call the download details manager
+        BillDetailManager temp = new BillDetailManager(context, tabsApi);
+        temp.setBillId(billId);
+        temp.pullRecords();
+        dbBillDetailManagers.add(temp);
+
+        return null;
     }
 
 
@@ -312,7 +374,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
 
     }
-    
+
     private int get5NextPages()
     {
         if(CurrentPage + 5 > MaxPage)
@@ -356,11 +418,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         return MinPage;
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context = MainActivity.this;
+
+        billDetailsDataManager.loadUserFileData(context);
 
         InitializeControls();
 
@@ -385,6 +450,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         IntentFilter filter = new IntentFilter();
         filter.addAction(PeopleManager.PULL_SUCCESS);
         filter.addAction(BillManager.PULL_SUCCESS);
+        filter.addAction(BillDetailManager.PULL_SUCCESS);
         filter.addAction(VoteManager.PULL_SUCCESS);
         filter.addAction(PersonDetailsManager.PULL_SUCCESS);
         broadcastManager.registerReceiver(mBroadcastReceiver, filter);
@@ -593,6 +659,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             userLocation = currentLocation;
             pplManager.pullPeopleFromLatLong(userLocation.getLatitude(), userLocation.getLongitude());
         }
+        else
+        {
+            pplManager.pullPeopleFromLatLong(28.43, -81.36);
+        }
+
     }
 
     @Override

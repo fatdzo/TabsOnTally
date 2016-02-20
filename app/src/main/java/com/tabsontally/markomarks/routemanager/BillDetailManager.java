@@ -30,6 +30,7 @@ public class BillDetailManager extends BaseRouteManager {
     private String mBillId;
 
     public BillDetail getBillDetail() {
+        switchState(BaseRouteManager.DONE);
         return billDetail;
     }
 

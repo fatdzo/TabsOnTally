@@ -15,12 +15,13 @@ import java.lang.annotation.RetentionPolicy;
  */
 public abstract class BaseRouteManager {
 
-    @IntDef({IDLE, PULLING, FINISHED})
+    @IntDef({IDLE, PULLING, FINISHED, DONE})
     @Retention(RetentionPolicy.SOURCE)
     public @interface STATE { }
     public final static int IDLE = 0;
     public final static int PULLING = 1;
     public final static int FINISHED = 2;
+    public final static int DONE = 3;
 
     protected Context mContext;
     protected APIConfig mApiConfig;
@@ -41,6 +42,12 @@ public abstract class BaseRouteManager {
     {
         return mState == FINISHED;
     }
+
+    public boolean isManagerDone()
+    {
+        return mState == DONE;
+    }
+
 
 
     protected String getUrl(int page, boolean usePaging) {

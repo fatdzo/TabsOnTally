@@ -2,13 +2,14 @@ package com.tabsontally.markomarks.model;
 
 import com.tabsontally.markomarks.model.minor.LinkObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
  * Created by MarkoPhillipMarkovic on 1/24/2016.
  */
-public class DocumentObject {
+public class DocumentObject implements Serializable{
 
     private String mNote;
     private ArrayList<LinkObject> mLinks;

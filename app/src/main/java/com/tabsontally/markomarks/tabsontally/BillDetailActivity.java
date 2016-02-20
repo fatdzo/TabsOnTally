@@ -52,7 +52,7 @@ public class BillDetailActivity extends AppCompatActivity {
                     billDetail = bllDetailManager.getBillDetail();
                     if(billDetail != null)
                     {
-                        txtBillTitleView.setText(billDetail.getmTitle());
+                        txtBillTitleView.setText(billDetail.getTitle());
                         txtbillIdentifier.setText(billDetail.getIdentifier());
 
                         txtBillDates.setText(billDetail.getDatesString());

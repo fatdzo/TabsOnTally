@@ -37,7 +37,6 @@
                 android:paddingBottom="10dp"
                 android:text="Indentifier"
                 />
-
             <TextView
                 android:id="@+id/txt_BillDetailSubjects"
                 android:layout_width="wrap_content"
@@ -45,7 +44,6 @@
                 android:textStyle="italic"
                 android:text="subjects"
                 />
-
             <TextView
                 android:id="@+id/txt_BillDetailDates"
                 android:layout_width="wrap_content"
@@ -69,10 +67,6 @@
                     android:text="Bill Description"
                     />
             </ScrollView>
-
-
-
-
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -84,7 +78,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
             </ListView>
-
         </LinearLayout>
 
     </LinearLayout>

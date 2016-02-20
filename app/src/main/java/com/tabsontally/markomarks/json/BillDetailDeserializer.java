@@ -62,7 +62,6 @@ public class BillDetailDeserializer  implements JsonDeserializer<BillDetail> {
         for (int i = 0; i < documentList.size(); i++) {
             JsonObject el = documentList.get(i).getAsJsonObject();
             String elNote = el.get("note").getAsString();
-            Log.e("TABSONTALLY", "GOT DOCUMENT ->" + elNote);
             String dateString = el.get("date").getAsString();
 
             Date dateValue = new Date();
@@ -83,8 +82,6 @@ public class BillDetailDeserializer  implements JsonDeserializer<BillDetail> {
                 String lnkMediaType = lnk.get("media_type").getAsString();
                 String lnkUrl = lnk.get("url").getAsString();
 
-                Log.e("TABSONTALLY", "GOT DOCUMENT LINK->" + lnkUrl);
-
                 LinkObject temp = new LinkObject(lnkText,lnkUrl,lnkMediaType);
                 documentLinks.add(temp);
             }
@@ -100,7 +97,6 @@ public class BillDetailDeserializer  implements JsonDeserializer<BillDetail> {
         for (int i = 0; i < versionList.size(); i++) {
             JsonObject ver = versionList.get(i).getAsJsonObject();
             String elNote = ver.get("note").getAsString();
-            Log.e("TABSONTALLY", "GOT VERSION ->" + elNote);
             String dateString = ver.get("date").getAsString();
 
             Date dateValue = new Date();
@@ -121,8 +117,6 @@ public class BillDetailDeserializer  implements JsonDeserializer<BillDetail> {
                 String lnkMediaType = lnk.get("media_type").getAsString();
                 String lnkUrl = lnk.get("url").getAsString();
 
-                Log.e("TABSONTALLY", "GOT VERSION LINK->" + lnkUrl  + " - - " + lnkText.length());
-
                 LinkObject temp = new LinkObject(lnkText,lnkUrl,lnkMediaType);
                 versionLinks.add(temp);
             }
@@ -136,7 +130,6 @@ public class BillDetailDeserializer  implements JsonDeserializer<BillDetail> {
         ArrayList<String> subjects = new ArrayList<>();
         for (int k = 0; k < subjectList.size(); k++) {
             String sub = subjectList.get(k).getAsString();
-            Log.e("TABSONTALLY", "GOT SUBJECT ->" + sub);
             subjects.add(sub);
         }
 
