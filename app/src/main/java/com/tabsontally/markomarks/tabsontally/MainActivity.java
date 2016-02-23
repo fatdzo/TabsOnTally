@@ -642,6 +642,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                 CurrentSort = selected.getmvalue();
 
+                CurrentPage = 1;
+
                 refreshBillListAndPaginate();
             }
 
