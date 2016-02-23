@@ -315,7 +315,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         }
-        refreshListViewAndPaginate();
+        refreshBillListAndPaginate();
     }
 
 
@@ -338,8 +338,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     }
 
 
-    private void refreshListViewAndPaginate()
+    private void refreshBillListAndPaginate()
     {
+        MaxPage = (int) Math.ceil((double) billList.size() / PageSize);
+        txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
+
+        btn_PrevPageButton.setEnabled(true);
+        btn_Prev5PagesButton.setEnabled(true);
+
+        if(CurrentPage == 1)
+        {
+            btn_PrevPageButton.setEnabled(false);
+            btn_Prev5PagesButton.setEnabled(false);
+        }
+
+        btn_NextPageButton.setEnabled(true);
+        btn_Next5PagesButton.setEnabled(true);
+
+        if(CurrentPage == MaxPage)
+        {
+            btn_NextPageButton.setEnabled(false);
+            btn_Next5PagesButton.setEnabled(false);
+        }
+
         if(CurrentPage > 0 && PageSize > 0 && billList.size() > 0)
         {
             int maxValue = CurrentPage * PageSize;
@@ -535,17 +556,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onClick(View v) {
 
                 CurrentPage = get5NextPages();
-                refreshListViewAndPaginate();
+                refreshBillListAndPaginate();
                 //bllManager.pullRecordPage(CurrentPage);
-                if (CurrentPage == MaxPage) {
-                    btn_NextPageButton.setEnabled(false);
-                    btn_Next5PagesButton.setEnabled(false);
-                }
-
-                btn_PrevPageButton.setEnabled(true);
-                btn_Prev5PagesButton.setEnabled(true);
-
-                txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
             }
         });
 
@@ -553,19 +565,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 CurrentPage = getNextPage();
-                refreshListViewAndPaginate();
+                refreshBillListAndPaginate();
                 //bllManager.pullRecordPage(CurrentPage);
-
-                if(CurrentPage == MaxPage)
-                {
-                    btn_NextPageButton.setEnabled(false);
-                    btn_Next5PagesButton.setEnabled(false);
-                }
-
-                btn_PrevPageButton.setEnabled(true);
-                btn_Prev5PagesButton.setEnabled(true);
-
-                txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
             }
         });
 
@@ -574,17 +575,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 CurrentPage = getPrev5Pages();
-                refreshListViewAndPaginate();
-                //bllManager.pullRecordPage(CurrentPage);
-                if (CurrentPage == 1) {
-                    btn_PrevPageButton.setEnabled(false);
-                    btn_Prev5PagesButton.setEnabled(false);
-                }
-
-                btn_NextPageButton.setEnabled(true);
-                btn_Next5PagesButton.setEnabled(true);
-
-                txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
+                refreshBillListAndPaginate();
             }
         });
 
@@ -592,18 +583,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 CurrentPage = getPreviousPage();
-                refreshListViewAndPaginate();
+                refreshBillListAndPaginate();
                 //bllManager.pullRecordPage(CurrentPage);
-                if(CurrentPage == 1)
-                {
-                    btn_PrevPageButton.setEnabled(false);
-                    btn_Prev5PagesButton.setEnabled(false);
-                }
-
-                btn_NextPageButton.setEnabled(true);
-                btn_Next5PagesButton.setEnabled(true);
-
-                txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
             }
         });
 
@@ -631,19 +612,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 PageSizeItem selected = (PageSizeItem) parent.getSelectedItem();
                 CurrentPage = 1;
                 PageSize = selected.getmvalue();
-                MaxPage = (int) Math.ceil((double) billList.size() / PageSize);
 
-                if (CurrentPage == 1) {
-                    btn_PrevPageButton.setEnabled(false);
-                    btn_Prev5PagesButton.setEnabled(false);
-                }
-
-                btn_NextPageButton.setEnabled(true);
-                btn_Next5PagesButton.setEnabled(true);
-
-                txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
-
-                refreshListViewAndPaginate();
+                refreshBillListAndPaginate();
             }
 
             @Override
@@ -672,7 +642,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                 CurrentSort = selected.getmvalue();
 
-                refreshListViewAndPaginate();
+                refreshBillListAndPaginate();
             }
 
             @Override
