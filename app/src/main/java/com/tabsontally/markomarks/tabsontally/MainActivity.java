@@ -658,9 +658,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         BaseItem dateSort = new BaseItem(SORTBYDATE,"by date");
         BaseItem voteSort = new BaseItem(SORTBYVOTES, "by votes");
         BaseItem nameSort = new BaseItem(SORTBYNAME, "by name");
+        sortOptions.add(nameSort);
         sortOptions.add(dateSort);
         sortOptions.add(voteSort);
-        sortOptions.add(nameSort);
         BillSortOptionAdapter pageSortAdapter = new BillSortOptionAdapter(context, sortOptions);
         spinnerSort.setAdapter(pageSortAdapter);
 
