@@ -103,8 +103,6 @@ public class PeopleManager extends BaseRouteManager {
         if(page == 0)
             return;
 
-
-
         this.setRouteParameters(getRouteParameters());
         Ion.with(mContext)
                 .load(getUrl(page, mUsePaging))

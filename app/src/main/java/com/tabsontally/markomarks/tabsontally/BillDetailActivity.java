@@ -117,7 +117,7 @@ public class BillDetailActivity extends AppCompatActivity {
 
             @Override
             public String getApiKey() {
-                return "2dac3769-82a8-43e4-879c-2b774cfe1328";
+                return "ad9608f7-d243-4f20-bc34-03c02c42792d";
             }
 
             @Override

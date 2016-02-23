@@ -38,17 +38,10 @@ public abstract class BaseRouteManager {
         mApiConfig = config;
     }
 
-    public boolean isManagerDoneLoading()
-    {
-        return mState == FINISHED;
-    }
-
     public boolean isManagerDone()
     {
         return mState == DONE;
     }
-
-
 
     protected String getUrl(int page, boolean usePaging) {
         mUsePaging = usePaging;

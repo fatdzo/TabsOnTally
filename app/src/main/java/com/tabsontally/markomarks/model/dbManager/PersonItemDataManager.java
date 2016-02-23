@@ -6,8 +6,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.tabsontally.markomarks.model.BillDetail;
-import com.tabsontally.markomarks.model.db.BillDetailDB;
+import com.tabsontally.markomarks.model.PersonDetails;
+import com.tabsontally.markomarks.model.items.PersonItem;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -19,42 +19,47 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 /**
- * Created by MarkoPhillipMarkovic on 2/18/2016.
+ * Created by MarkoPhillipMarkovic on 2/20/2016.
  */
-public class BillDetailsDataManager {
-    private ArrayList<BillDetailDB> mBillDetails;
+public class PersonItemDataManager {
+    public ArrayList<PersonItem> getPersonItems() {
+        return mPersonItems;
+    }
 
-    private static final String USERFILECONTENTNAME = "tabsontally_billdetails_content.txt";
+    private ArrayList<PersonItem> mPersonItems;
+
+    private static final String USERFILECONTENTNAME = "tabsontally_person_details_content.txt";
     private Gson mGson;
     Type arrayListType;
 
-    public BillDetailsDataManager()
+    public PersonItemDataManager()
     {
-        mBillDetails = new ArrayList<>();
+        mPersonItems = new ArrayList<>();
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.create();
-        arrayListType  = new TypeToken<ArrayList<BillDetailDB>>() {}.getType();
+        arrayListType  = new TypeToken<ArrayList<PersonItem>>() {}.getType();
         mGson = gson;
     }
 
-    public BillDetailDB convertToBillDetailDB(BillDetail source)
+    public void appendPersonDetailsToPersonAndFile(Context ctx, PersonDetails personDetails)
     {
-        BillDetailDB target = new BillDetailDB(source.getId(), source.getType(), source.getTitle(), source.getSubjects());
-        return target;
-    }
-
-    public void appendBillDetailsToFile(Context ctx, BillDetail detail)
-    {
-        // TODO Auto-generated method stub
         try {
-            BillDetailDB convertedBillDetail = convertToBillDetailDB(detail);
-            mBillDetails.add(convertedBillDetail);
-            String result = new Gson().toJson(mBillDetails.clone());
+
+            for(PersonItem p: mPersonItems)
+            {
+                if(p.Id.equals(personDetails.getId()))
+                {
+                    p.Details = personDetails;
+                }
+            }
+
+            String result = new Gson().toJson(mPersonItems.clone());
             FileOutputStream fos;
             fos = ctx.openFileOutput(USERFILECONTENTNAME, Context.MODE_PRIVATE);
             fos.write(result.getBytes());
             fos.flush();
             fos.close();
+
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -64,12 +69,9 @@ public class BillDetailsDataManager {
         }
     }
 
-    public void addBillDetailToContent(final Context ctx, final BillDetail newDetail)
+    public void addPersonDetailToContent(final Context ctx, final PersonDetails newDetail)
     {
-        if(!mBillDetails.contains(newDetail))
-        {
-            appendBillDetailsToFile(ctx, newDetail);
-        }
+        appendPersonDetailsToPersonAndFile(ctx, newDetail);
     }
     public void loadUserFileData(Context ctx)
     {
@@ -110,20 +112,9 @@ public class BillDetailsDataManager {
     {
         if(data.length() > 0)
         {
-            ArrayList<BillDetailDB> bdList = mGson.fromJson(data, arrayListType);
-            mBillDetails.addAll(bdList);
+            ArrayList<PersonItem> bdList = mGson.fromJson(data, arrayListType);
+            Log.e("TABSONTALLY", "PERSONLIST LOADED =>" + String.valueOf(bdList.size()));
+            mPersonItems.addAll(bdList);
         }
-    }
-
-    public BillDetailDB findDetailDbById(String billId)
-    {
-        for(BillDetailDB bd: mBillDetails)
-        {
-            if(bd.getId().equals(billId))
-            {
-                return bd;
-            }
-        }
-        return null;
     }
 }

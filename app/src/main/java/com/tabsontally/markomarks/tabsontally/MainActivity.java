@@ -24,8 +24,10 @@ import com.google.gson.GsonBuilder;
 import com.tabsontally.markomarks.arrayadapters.BillPageSizeAdapter;
 import com.tabsontally.markomarks.arrayadapters.BillSortOptionAdapter;
 import com.tabsontally.markomarks.model.BillDetail;
+import com.tabsontally.markomarks.model.PersonDetails;
 import com.tabsontally.markomarks.model.db.BillDetailDB;
 import com.tabsontally.markomarks.model.dbManager.BillDetailsDataManager;
+import com.tabsontally.markomarks.model.dbManager.PersonItemDataManager;
 import com.tabsontally.markomarks.model.items.BaseItem;
 import com.tabsontally.markomarks.model.items.PageSizeItem;
 import com.tabsontally.markomarks.routemanager.BillDetailManager;
@@ -58,30 +60,29 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Context context;
     private BillAdapter billAdapter;
 
-    GoogleApiClient mGoogleApiClient;
-
-    private ArrayList<BillItem> billList = new ArrayList<>();
-    private ArrayList<BillDetailManager> dbBillDetailManagers = new ArrayList<>();
-
-    private ArrayList<PersonItem> personList = new ArrayList<>();
-
     private APIConfig tabsApi;
 
-    private BillManager bllManager;
+    GoogleApiClient mGoogleApiClient;
+
+    private ArrayList<BillDetailManager> billDetailManagers = new ArrayList<>();
+    private ArrayList<PersonDetailsManager> personDetailManages = new ArrayList<>();
+    private ArrayList<VoteManager> voteManagers = new ArrayList<>();
+
     private PeopleManager pplManager;
-    private ArrayList<VoteManager> vtManagerList = new ArrayList<>();
-    private ArrayList<PersonDetailsManager> personDetailManagerList = new ArrayList<>();
 
     BillDetailsDataManager billDetailsDataManager = new BillDetailsDataManager();
+    PersonItemDataManager personDetailsDataManager = new PersonItemDataManager();
 
     private ListView billsListView;
-
-    private TextView txtCurrentPage;
+    private ArrayList<PersonItem> personList = new ArrayList<>();
+    private ArrayList<BillItem> billList = new ArrayList<>();
 
     private int CurrentPage = 1;
     private int MaxPage = 1;
     private int MinPage = 1;
     private int PageSize = 20;
+
+    private TextView txtCurrentPage;
 
     private Button btn_PrevPageButton;
     private Button btn_NextPageButton;
@@ -102,59 +103,69 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     break;
                 }
                 case PersonDetailsManager.PULL_SUCCESS:{
-
-                    for(PersonDetailsManager pdm: personDetailManagerList)
+                    for(PersonDetailsManager pdm: personDetailManages)
                     {
-                        for(PersonItem p: personList)
+                        if(!pdm.isManagerDone())
                         {
-                            if(pdm.getmPersonId().equals(p.Id))
+                            PersonDetails tempDetails = pdm.getPersonDetails();
+
+                            if(tempDetails!=null)
                             {
-                                p.Details = pdm.getPerson();
+                                for(PersonItem p: personList)
+                                {
+                                    if(pdm.getmPersonId().equals(p.Id))
+                                    {
+                                        p.Details = tempDetails;
+                                        personDetailsDataManager.addPersonDetailToContent(context, p.Details);
+                                    }
+                                }
                             }
+
                         }
+
                     }
 
                     billAdapter.updatePersonList(personList);
-                }break;
+                    break;
+                }
                 case PeopleManager.PULL_SUCCESS: {
                     personList.clear();
+                    voteManagers.clear();
                     personList.addAll(pplManager.getPersonItemList());
 
-                    vtManagerList.clear();
                     final GsonBuilder gsonBuilder = new GsonBuilder();
                     gsonBuilder.registerTypeAdapter(Vote.class, new VoteDeserializer());
                     gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
                     final Gson gson = gsonBuilder.create();
 
                     for (PersonItem p : personList) {
-                        if(!personDetailsManageListContainsPersonId(p.Id))
+                        if(p.Details == null)
                         {
-                            PersonDetailsManager pdm = new PersonDetailsManager(context,tabsApi, p.Id);
-
+                            PersonDetailsManager pdm = new PersonDetailsManager(context, tabsApi, p.Id);
                             pdm.pullRecords();
-                            personDetailManagerList.add(pdm);
+
+                            personDetailManages.add(pdm);
                         }
 
                         if(!voteManagerListContainsPersonId(p.Id))
                         {
                             VoteManager temp = new VoteManager(context, tabsApi, gson);
                             temp.pullRecords(p.Id, p.FullName, LegislatorVotingOption.YES);
-                            vtManagerList.add(temp);
+                            voteManagers.add(temp);
 
                             VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
                             tempFalse.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NO);
-                            vtManagerList.add(tempFalse);
+                            voteManagers.add(tempFalse);
 
                             VoteManager tempNotVoting = new VoteManager(context, tabsApi, gson);
                             tempNotVoting.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NOTVOTING);
-                            vtManagerList.add(tempNotVoting);
+                            voteManagers.add(tempNotVoting);
                         }
                     }
-
                     break;
                 }
                 case BillDetailManager.PULL_SUCCESS:{
-                    for(BillDetailManager bdm: dbBillDetailManagers)
+                    for(BillDetailManager bdm: billDetailManagers)
                     {
                         if(!bdm.isManagerDone())
                         {
@@ -174,8 +185,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         }
                     }
                     billAdapter.notifyDataSetChanged();
-
-                }break;
+                    break;
+                }
                 case BillManager.PULL_SUCCESS: {
                     /*billList.clear();
                     billList.addAll(bllManager.getBillItemList());
@@ -188,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         CurrentPage = bllManager.getmMeta().Page;
                     }
 
-                    vtManagerList.clear();
+                    voteManagers.clear();
                     final GsonBuilder gsonBuilder = new GsonBuilder();
                     gsonBuilder.registerTypeAdapter(Vote.class, new VoteDeserializer());
                     gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
@@ -197,15 +208,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
                         VoteManager temp = new VoteManager(context, tabsApi, gson);
                         temp.pullRecords(p.Id, p.FullName, LegislatorVotingOption.YES);
-                        vtManagerList.add(temp);
+                        voteManagers.add(temp);
 
                         VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
                         tempFalse.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NO);
-                        vtManagerList.add(tempFalse);
+                        voteManagers.add(tempFalse);
 
                         VoteManager tempNotVoting = new VoteManager(context, tabsApi, gson);
                         tempNotVoting.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NOTVOTING);
-                        vtManagerList.add(tempNotVoting);
+                        voteManagers.add(tempNotVoting);
                     }
 
                     break;
@@ -215,27 +226,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     };
 
+
     private void updateBillItemFromBillDetailDb(BillItem billItem, BillDetailDB detail)
     {
         billItem.Title = detail.getTitle();
     }
 
-
-    private boolean personDetailsManageListContainsPersonId(String personId)
-    {
-        for(PersonDetailsManager pdm: personDetailManagerList)
-        {
-            if(pdm.getmPersonId().equals(personId))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private boolean voteManagerListContainsPersonId(String personId)
     {
-        for(VoteManager v: vtManagerList)
+        for(VoteManager v: voteManagers)
         {
             if(v.getmPersonId().equals(personId))
             {
@@ -268,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         MaxPage = (int) Math.ceil((double) billList.size() / PageSize);
         txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
 
-        for(VoteManager vtManager: vtManagerList)
+        for(VoteManager vtManager: voteManagers)
         {
             ArrayList<VoteItem> vItems = vtManager.getVoteItems();
             if(vItems.size() > 0) {
@@ -333,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         BillDetailManager temp = new BillDetailManager(context, tabsApi);
         temp.setBillId(billId);
         temp.pullRecords();
-        dbBillDetailManagers.add(temp);
+        billDetailManagers.add(temp);
 
         return null;
     }
@@ -399,8 +398,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private int getPrev5Pages()
     {
-        if(CurrentPage - 5 > MinPage)
-        {
+        if(CurrentPage - 5 > MinPage) {
             return CurrentPage - 5;
         }
 
@@ -425,10 +423,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
         context = MainActivity.this;
 
-        billDetailsDataManager.loadUserFileData(context);
-
-        InitializeControls();
-
         tabsApi = new APIConfig() {
             @Override
             public String getUrl() {
@@ -437,7 +431,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             @Override
             public String getApiKey() {
-                return "2dac3769-82a8-43e4-879c-2b774cfe1328";
+                return "ad9608f7-d243-4f20-bc34-03c02c42792d";
             }
 
             @Override
@@ -461,9 +455,48 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 .addApi(LocationServices.API)
                 .build();
 
-        bllManager = new BillManager(context, tabsApi);
-
         pplManager = new PeopleManager(context, tabsApi);
+
+        billDetailsDataManager.loadUserFileData(context);
+
+        personDetailsDataManager.loadUserFileData(context);
+        personList = personDetailsDataManager.getPersonItems();
+
+        final GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(Vote.class, new VoteDeserializer());
+        gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
+        final Gson gson = gsonBuilder.create();
+
+        for(PersonItem p: personList)
+        {
+            if(!voteManagerListContainsPersonId(p.Id))
+            {
+                VoteManager temp = new VoteManager(context, tabsApi, gson);
+                temp.pullRecords(p.Id, p.FullName, LegislatorVotingOption.YES);
+                voteManagers.add(temp);
+
+                VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
+                tempFalse.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NO);
+                voteManagers.add(tempFalse);
+
+                VoteManager tempNotVoting = new VoteManager(context, tabsApi, gson);
+                tempNotVoting.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NOTVOTING);
+                voteManagers.add(tempNotVoting);
+            }
+        }
+
+
+        if(userLocation != null && personList.size() == 0)
+        {
+            Log.e("TABSONTALLY", "PERSON LIST SIZE GPS COORDINATES " + String.valueOf(personList.size()));
+            pplManager.pullPeopleFromLatLong(userLocation.getLatitude(), userLocation.getLongitude());
+        }
+        else if (personList.size() == 0)
+        {
+            pplManager.pullPeopleFromLatLong(28.43, -81.36);
+        }
+
+        InitializeControls();
     }
 
     @Override
@@ -652,18 +685,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     @Override
     public void onConnected(Bundle bundle) {
-        Location currentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-        if(userLocation == null && currentLocation != null)
-        {
-            userLocation = currentLocation;
-            pplManager.pullPeopleFromLatLong(userLocation.getLatitude(), userLocation.getLongitude());
-        }
-        else
-        {
-            pplManager.pullPeopleFromLatLong(28.43, -81.36);
-        }
-
+        userLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
 
     @Override

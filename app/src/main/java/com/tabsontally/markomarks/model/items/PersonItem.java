@@ -23,5 +23,18 @@ public class PersonItem implements Serializable {
         FullName = "";
         ImageUrl = "";
     }
+
+    @Override
+    public boolean equals(Object another)
+    {
+        boolean areEqual = false;
+
+        if (another != null && another instanceof PersonItem)
+        {
+            areEqual = this.Id.equals(((PersonItem) another).Id);
+        }
+
+        return areEqual;
+    }
 }
 

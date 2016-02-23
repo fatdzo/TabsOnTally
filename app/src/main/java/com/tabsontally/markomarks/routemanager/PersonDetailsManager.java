@@ -25,8 +25,14 @@ public class PersonDetailsManager extends BaseRouteManager {
 
     String mPersonId;
 
-    public PersonDetails getPerson() {
+    public PersonDetails getPersonDetails() {
+
+        if(person != null)
+        {
+            switchState(DONE);
+        }
         return person;
+
     }
 
     PersonDetails person;

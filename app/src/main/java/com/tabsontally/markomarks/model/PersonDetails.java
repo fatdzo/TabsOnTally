@@ -102,4 +102,17 @@ public class PersonDetails extends BaseData implements Serializable{
     public Date getmDeathDate() {
         return mDeathDate;
     }
+
+    @Override
+    public boolean equals(Object another)
+    {
+        boolean areEqual = false;
+
+        if (another != null && another instanceof PersonDetails)
+        {
+            areEqual = this.getId().equals(((PersonDetails) another).getId());
+        }
+
+        return areEqual;
+    }
 }
