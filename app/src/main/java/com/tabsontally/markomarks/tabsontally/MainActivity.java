@@ -299,9 +299,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     {
                         BillItem temp = new BillItem();
                         temp.Id = v.BillId;
-                        temp.Title = v.BillId;
-                        BillDetailDB bd = getBillDetailFromContent(v.BillId);
 
+                        BillDetailDB bd = getBillDetailFromContent(v.BillId);
                         if(bd != null)
                         {
                             updateBillItemFromBillDetailDb(temp, bd);
@@ -340,7 +339,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private void refreshBillListAndPaginate()
     {
-        MaxPage = (int) Math.ceil((double) billList.size() / PageSize);
+        ArrayList<BillItem> displayList = new ArrayList<>();
+
+        for(BillItem bl: billList)
+        {
+            if(bl.Title != null && bl.Title.length() > 0)
+            {
+                displayList.add(bl);
+            }
+        }
+
+        MaxPage = (int) Math.ceil((double) displayList.size() / PageSize);
         txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
 
         btn_PrevPageButton.setEnabled(true);
@@ -361,12 +370,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             btn_Next5PagesButton.setEnabled(false);
         }
 
-        if(CurrentPage > 0 && PageSize > 0 && billList.size() > 0)
+        if(CurrentPage > 0 && PageSize > 0 && displayList.size() > 0)
         {
             int maxValue = CurrentPage * PageSize;
-            if(maxValue > billList.size() - 1)
+            if(maxValue > displayList.size() - 1)
             {
-                maxValue = billList.size() - 1;
+                maxValue = displayList.size() - 1;
             }
 
             int minValue = (CurrentPage - 1) * PageSize;
@@ -374,19 +383,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             if(CurrentSort == SORTBYDATE)
             {
-                Collections.sort(billList, BillItem.UpdatedAtComparator);
+                Collections.sort(displayList, BillItem.UpdatedAtComparator);
             }
             if(CurrentSort == SORTBYNAME)
             {
-                Collections.sort(billList, BillItem.TitleComparator);
+                Collections.sort(displayList, BillItem.TitleComparator);
             }
 
             if(CurrentSort == SORTBYVOTES)
             {
-                Collections.sort(billList, BillItem.BillVotesComparator);
+                Collections.sort(displayList, BillItem.BillVotesComparator);
             }
 
-            ArrayList<BillItem> resultList = new ArrayList<>(billList.subList(minValue, maxValue));
+            ArrayList<BillItem> resultList = new ArrayList<>(displayList.subList(minValue, maxValue));
 
 
             billAdapter = new BillAdapter(context, resultList, personList, CurrentPage, PageSize);
