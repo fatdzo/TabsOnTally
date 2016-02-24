@@ -29,9 +29,10 @@ public class VoteManager extends BaseRouteManager {
     public static final String PULL_SUCCESS = "com.tabsontally.markomarks.votemanager.PULL SUCCESS";
     private static final String ROUTE = "votes/";
 
-
-
     private String mPersonId;
+    private String mPersonName;
+    private LegislatorVotingOption mVotingOption;
+    private ArrayList<Integer> mPagesPulled = new ArrayList<>();
 
     Meta mMeta = new Meta(1,1,0);
 
@@ -44,26 +45,44 @@ public class VoteManager extends BaseRouteManager {
         mVotes = new HashMap<>();
         mUsePaging = true;
         mGson = gson;
+        mInterval = 1;
+
         switchState(IDLE);
     }
 
-    public String getmPersonId() {
-        return mPersonId;
-    }
-
     //legislatorVoteOption - it can be Yes, No, Not voting
-    public void pullRecords(final String personId, final String personName, LegislatorVotingOption legislatorVoteOption)
+    public void pullRecords(final String personId, final String personName, LegislatorVotingOption legislatorVoteOption, int startPage)
     {
         mPersonId = personId;
-        mCurrentPage = 1;
+        mPersonName = personName;
+        mVotingOption = legislatorVoteOption;
+        mCurrentPage = startPage;
+        mStartPage = startPage;
         switchState(PULLING);
         pullRecordStep(mCurrentPage, personId, personName, legislatorVoteOption);
+    }
+
+    public void pullRecordsForPage(int startPage)
+    {
+        mStartPage = startPage;
+
+        if(mStartPage <= mMeta.Pages && !mPagesPulled.contains(startPage))
+        {
+            pullRecordStep(startPage, mPersonId, mPersonName, mVotingOption);
+        }
     }
 
     private void pullRecordStep(final int page, final String personId, final String personName, final LegislatorVotingOption legislatorVoteOption) {
         if(page == 0)
             return;
 
+        if(page > (mStartPage + mInterval - 1))
+        {
+            switchState(FINISHED);
+            return;
+        }
+
+        mVotingOption = legislatorVoteOption;
         mCurrentPage = page;
         this.setRouteParameters(getUrlParameters(null, personId, legislatorVoteOption));
         String votesUrl = getUrl(page, mUsePaging);
@@ -96,6 +115,8 @@ public class VoteManager extends BaseRouteManager {
                             mVotes.put(personId + vote.getmBillId(), vote);
                         }
 
+                        mPagesPulled.add(mMeta.Page);
+
                         if (mMeta.Page != mMeta.Pages && mMeta.Page > 0) {
                             mCurrentPage = mMeta.Page + 1;
                             pullRecordStep(mMeta.Page + 1, personId, personName, legislatorVoteOption);
@@ -109,32 +130,6 @@ public class VoteManager extends BaseRouteManager {
 
 
     }
-
-    public ArrayList<VoteItem> getVoteItems()
-    {
-        Vote[] votes = mVotes.values().toArray(new Vote[mVotes.values().size()]);
-        Arrays.sort(votes);
-        ArrayList<VoteItem> result = new ArrayList<>();
-        int index = 1;
-        for(Vote vt: votes)
-        {
-            VoteItem temp = new VoteItem();
-            temp.Id = vt.getmId();
-            temp.Result = vt.getmResult();
-            temp.Index = index;
-            temp.BillId = vt.getmBillId();
-            temp.PersonId = vt.getmPersonId();
-            temp.Name = vt.getmPersonName();
-            temp.PersonVotingOption = vt.getmPersonVoteOption();
-            temp.Updated = vt.getmUpdated();
-            result.add(temp);
-            index+=1;
-
-        }
-
-        return result;
-    }
-
 
     @Override
     public String getRoute() {
@@ -173,7 +168,6 @@ public class VoteManager extends BaseRouteManager {
 
         return result;
     }
-
     @Override
     protected void switchState(@STATE int newState) {
         mState = newState;
@@ -188,5 +182,36 @@ public class VoteManager extends BaseRouteManager {
                 broadcastManager.sendBroadcast(pullSuccessBroadcastIntent);
                 break;
         }
+    }
+
+    public String getmPersonId() {
+        return mPersonId;
+    }
+
+    public ArrayList<VoteItem> getVoteItems()
+    {
+        Vote[] votes = mVotes.values().toArray(new Vote[mVotes.values().size()]);
+        Arrays.sort(votes);
+        ArrayList<VoteItem> result = new ArrayList<>();
+        int index = 1;
+        for(Vote vt: votes)
+        {
+            VoteItem temp = new VoteItem();
+            temp.Id = vt.getmId();
+            temp.Result = vt.getmResult();
+            temp.Index = index;
+            temp.BillId = vt.getmBillId();
+            temp.PersonId = vt.getmPersonId();
+            temp.Name = vt.getmPersonName();
+            temp.PersonVotingOption = vt.getmPersonVoteOption();
+            temp.Updated = vt.getmUpdated();
+            result.add(temp);
+            index+=1;
+
+        }
+
+        switchState(DONE);
+
+        return result;
     }
 }

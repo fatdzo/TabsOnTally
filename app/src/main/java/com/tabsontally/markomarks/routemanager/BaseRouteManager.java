@@ -29,6 +29,9 @@ public abstract class BaseRouteManager {
     protected  @STATE int mState;
 
     protected int mCurrentPage = 1; //page starts at 1
+    protected int mStartPage = 1;
+    protected int mInterval = 3;
+
     protected boolean mUsePaging = true;
 
     private String mRouteParameters = "";

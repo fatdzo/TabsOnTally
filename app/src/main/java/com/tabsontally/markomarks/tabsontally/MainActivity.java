@@ -82,6 +82,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private int MinPage = 1;
     private int PageSize = 20;
 
+    private int VoteManagerCurrentPage = 1;
+
     private TextView txtCurrentPage;
 
     private Button btn_PrevPageButton;
@@ -147,20 +149,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             personDetailManages.add(pdm);
                         }
 
-                        if(!voteManagerListContainsPersonId(p.Id))
-                        {
-                            VoteManager temp = new VoteManager(context, tabsApi, gson);
-                            temp.pullRecords(p.Id, p.FullName, LegislatorVotingOption.YES);
-                            voteManagers.add(temp);
-
-                            VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
-                            tempFalse.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NO);
-                            voteManagers.add(tempFalse);
-
-                            VoteManager tempNotVoting = new VoteManager(context, tabsApi, gson);
-                            tempNotVoting.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NOTVOTING);
-                            voteManagers.add(tempNotVoting);
-                        }
+                        addVoteManagersForPerson(gson, p.Id, p.FullName);
                     }
                     break;
                 }
@@ -184,7 +173,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             }
                         }
                     }
-                    billAdapter.notifyDataSetChanged();
+                    refreshBillListAndPaginate();
+                    //billAdapter.notifyDataSetChanged();
                     break;
                 }
                 case BillManager.PULL_SUCCESS: {
@@ -226,6 +216,38 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         }
     };
 
+    private void pullVotesForPage()
+    {
+        if(MaxPage > 1 && MaxPage - CurrentPage < 3)
+        {
+            VoteManagerCurrentPage = VoteManagerCurrentPage + 1;
+            Log.e("TABSONTALLY", "PULLING VOTES FOR PAGE " + String.valueOf(VoteManagerCurrentPage));
+
+            for(VoteManager vt: voteManagers)
+            {
+                vt.pullRecordsForPage(VoteManagerCurrentPage);
+            }
+        }
+
+    }
+
+    private void addVoteManagersForPerson(Gson gson, String personId, String personFullName)
+    {
+        if(!voteManagerListContainsPersonId(personId))
+        {
+            VoteManager temp = new VoteManager(context, tabsApi, gson);
+            temp.pullRecords(personId, personFullName, LegislatorVotingOption.YES, CurrentPage);
+            voteManagers.add(temp);
+
+            VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
+            tempFalse.pullRecords(personId, personFullName, LegislatorVotingOption.NO, CurrentPage);
+            voteManagers.add(tempFalse);
+
+            VoteManager tempNotVoting = new VoteManager(context, tabsApi, gson);
+            tempNotVoting.pullRecords(personId, personFullName, LegislatorVotingOption.NOTVOTING, CurrentPage);
+            voteManagers.add(tempNotVoting);
+        }
+    }
 
     private void updateBillItemFromBillDetailDb(BillItem billItem, BillDetailDB detail)
     {
@@ -263,9 +285,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private void getVoteItemList()
     {
-        CurrentPage = 1;
-        MaxPage = (int) Math.ceil((double) billList.size() / PageSize);
-        txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
+        //CurrentPage = 1;
+        //MaxPage = (int) Math.ceil((double) billList.size() / PageSize);
+        //txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
 
         for(VoteManager vtManager: voteManagers)
         {
@@ -314,6 +336,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 }
             }
         }
+
         refreshBillListAndPaginate();
     }
 
@@ -499,22 +522,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
         for(PersonItem p: personList)
         {
-            if(!voteManagerListContainsPersonId(p.Id))
-            {
-                VoteManager temp = new VoteManager(context, tabsApi, gson);
-                temp.pullRecords(p.Id, p.FullName, LegislatorVotingOption.YES);
-                voteManagers.add(temp);
-
-                VoteManager tempFalse = new VoteManager(context, tabsApi, gson);
-                tempFalse.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NO);
-                voteManagers.add(tempFalse);
-
-                VoteManager tempNotVoting = new VoteManager(context, tabsApi, gson);
-                tempNotVoting.pullRecords(p.Id, p.FullName, LegislatorVotingOption.NOTVOTING);
-                voteManagers.add(tempNotVoting);
-            }
+            addVoteManagersForPerson(gson, p.Id, p.FullName);
         }
-
 
         if(userLocation != null && personList.size() == 0)
         {
@@ -565,6 +574,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             public void onClick(View v) {
 
                 CurrentPage = get5NextPages();
+
+                pullVotesForPage();
+
                 refreshBillListAndPaginate();
                 //bllManager.pullRecordPage(CurrentPage);
             }
@@ -574,6 +586,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 CurrentPage = getNextPage();
+
+                pullVotesForPage();
+
                 refreshBillListAndPaginate();
                 //bllManager.pullRecordPage(CurrentPage);
             }
@@ -584,6 +599,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 CurrentPage = getPrev5Pages();
+
+                pullVotesForPage();
+
                 refreshBillListAndPaginate();
             }
         });
@@ -592,6 +610,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             @Override
             public void onClick(View v) {
                 CurrentPage = getPreviousPage();
+
+                pullVotesForPage();
+
                 refreshBillListAndPaginate();
                 //bllManager.pullRecordPage(CurrentPage);
             }
@@ -621,6 +642,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                 PageSizeItem selected = (PageSizeItem) parent.getSelectedItem();
                 CurrentPage = 1;
                 PageSize = selected.getmvalue();
+
+                pullVotesForPage();
 
                 refreshBillListAndPaginate();
             }
