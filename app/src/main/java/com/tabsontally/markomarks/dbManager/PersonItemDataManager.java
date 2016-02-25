@@ -1,4 +1,4 @@
-package com.tabsontally.markomarks.model.dbManager;
+package com.tabsontally.markomarks.dbManager;
 
 import android.content.Context;
 import android.util.Log;
