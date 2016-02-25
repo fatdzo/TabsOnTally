@@ -14,7 +14,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.tabsontally.markomarks.json.PersonDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
-import com.tabsontally.markomarks.model.Person;
+import com.tabsontally.markomarks.model.json.Person;
 import com.tabsontally.markomarks.model.items.PersonItem;
 
 import java.util.ArrayList;

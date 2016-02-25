@@ -1,13 +1,12 @@
 package com.tabsontally.markomarks.json;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
-import com.tabsontally.markomarks.model.Person;
+import com.tabsontally.markomarks.model.json.Person;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -15,7 +14,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 public class PersonDeserializer implements JsonDeserializer<Person> {
     @Override

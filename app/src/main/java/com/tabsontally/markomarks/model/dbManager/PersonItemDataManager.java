@@ -6,7 +6,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.tabsontally.markomarks.model.PersonDetails;
+import com.tabsontally.markomarks.model.json.PersonDetails;
 import com.tabsontally.markomarks.model.items.PersonItem;
 
 import java.io.BufferedReader;

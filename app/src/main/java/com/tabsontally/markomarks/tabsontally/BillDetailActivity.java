@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.tabsontally.markomarks.arrayadapters.BillVoterAdapter;
 import com.tabsontally.markomarks.model.APIConfig;
-import com.tabsontally.markomarks.model.BillDetail;
+import com.tabsontally.markomarks.model.json.BillDetail;
 import com.tabsontally.markomarks.model.items.BillItem;
 import com.tabsontally.markomarks.model.items.PersonItem;
 import com.tabsontally.markomarks.model.items.VoteItem;
@@ -77,8 +77,6 @@ public class BillDetailActivity extends AppCompatActivity {
         filter.addAction(BillDetailManager.PULL_SUCCESS);
         broadcastManager.registerReceiver(mBroadcastReceiver, filter);
         initializeControls();
-
-
     }
 
     private void initializeControls()

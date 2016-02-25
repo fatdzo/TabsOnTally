@@ -1,6 +1,4 @@
-package com.tabsontally.markomarks.model;
-
-import android.util.Log;
+package com.tabsontally.markomarks.model.json;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;

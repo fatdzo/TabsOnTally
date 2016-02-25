@@ -1,4 +1,4 @@
-package com.tabsontally.markomarks.model;
+package com.tabsontally.markomarks.model.json;
 
 import android.support.annotation.NonNull;
 

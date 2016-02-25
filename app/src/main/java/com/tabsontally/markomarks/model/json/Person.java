@@ -1,10 +1,11 @@
-package com.tabsontally.markomarks.model;
+package com.tabsontally.markomarks.model.json;
 
 import android.support.annotation.NonNull;
 
 
+import com.tabsontally.markomarks.model.json.BaseData;
+
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 public class Person extends BaseData {

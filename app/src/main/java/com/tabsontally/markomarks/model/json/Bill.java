@@ -1,10 +1,8 @@
-package com.tabsontally.markomarks.model;
+package com.tabsontally.markomarks.model.json;
 
 import android.support.annotation.NonNull;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by johnli on 1/16/16.

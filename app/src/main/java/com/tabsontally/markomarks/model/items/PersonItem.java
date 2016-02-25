@@ -1,8 +1,6 @@
 package com.tabsontally.markomarks.model.items;
 
-import android.graphics.drawable.Drawable;
-
-import com.tabsontally.markomarks.model.PersonDetails;
+import com.tabsontally.markomarks.model.json.PersonDetails;
 
 import java.io.Serializable;
 

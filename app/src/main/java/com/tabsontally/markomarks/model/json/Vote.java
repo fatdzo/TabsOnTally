@@ -1,4 +1,6 @@
-package com.tabsontally.markomarks.model;
+package com.tabsontally.markomarks.model.json;
+
+import com.tabsontally.markomarks.model.LegislatorVotingOption;
 
 import java.util.Date;
 

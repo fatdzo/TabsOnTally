@@ -14,12 +14,9 @@ import com.koushikdutta.ion.Ion;
 import com.tabsontally.markomarks.json.BillDeserializer;
 import com.tabsontally.markomarks.json.MetaDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
-import com.tabsontally.markomarks.model.Bill;
-import com.tabsontally.markomarks.model.Meta;
-import com.tabsontally.markomarks.model.items.BillItem;
+import com.tabsontally.markomarks.model.json.Bill;
+import com.tabsontally.markomarks.model.json.Meta;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -3,18 +3,15 @@ package com.tabsontally.markomarks.routemanager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.tabsontally.markomarks.json.BillDetailDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
-import com.tabsontally.markomarks.model.BillDetail;
+import com.tabsontally.markomarks.model.json.BillDetail;
 
 /**
  * Created by MarkoPhillipMarkovic on 2/9/2016.

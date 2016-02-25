@@ -1,12 +1,11 @@
 package com.tabsontally.markomarks.model.dbManager;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import com.tabsontally.markomarks.model.BillDetail;
+import com.tabsontally.markomarks.model.json.BillDetail;
 import com.tabsontally.markomarks.model.db.BillDetailDB;
 
 import java.io.BufferedReader;

@@ -23,8 +23,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tabsontally.markomarks.arrayadapters.BillPageSizeAdapter;
 import com.tabsontally.markomarks.arrayadapters.BillSortOptionAdapter;
-import com.tabsontally.markomarks.model.BillDetail;
-import com.tabsontally.markomarks.model.PersonDetails;
+import com.tabsontally.markomarks.model.json.BillDetail;
+import com.tabsontally.markomarks.model.json.PersonDetails;
 import com.tabsontally.markomarks.model.db.BillDetailDB;
 import com.tabsontally.markomarks.model.dbManager.BillDetailsDataManager;
 import com.tabsontally.markomarks.model.dbManager.PersonItemDataManager;
@@ -40,8 +40,8 @@ import com.tabsontally.markomarks.arrayadapters.BillAdapter;
 import com.tabsontally.markomarks.json.MetaDeserializer;
 import com.tabsontally.markomarks.json.VoteDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
-import com.tabsontally.markomarks.model.Meta;
-import com.tabsontally.markomarks.model.Vote;
+import com.tabsontally.markomarks.model.json.Meta;
+import com.tabsontally.markomarks.model.json.Vote;
 import com.tabsontally.markomarks.model.items.BillItem;
 import com.tabsontally.markomarks.model.items.PersonItem;
 import com.tabsontally.markomarks.model.items.VoteItem;
@@ -218,11 +218,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private void pullVotesForPage()
     {
-        if(MaxPage > 1 && MaxPage - CurrentPage < 3)
+        if(MaxPage > 1 && MaxPage - CurrentPage < 2)
         {
             VoteManagerCurrentPage = VoteManagerCurrentPage + 1;
-            Log.e("TABSONTALLY", "PULLING VOTES FOR PAGE " + String.valueOf(VoteManagerCurrentPage));
-
             for(VoteManager vt: voteManagers)
             {
                 vt.pullRecordsForPage(VoteManagerCurrentPage);
@@ -625,11 +623,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         PageSizeItem temp10 = new PageSizeItem(10);
         PageSizeItem temp20 = new PageSizeItem(20);
         PageSizeItem temp50 = new PageSizeItem(50);
-        PageSizeItem temp100 = new PageSizeItem(100);
         pageSizes.add(temp10);
         pageSizes.add(temp20);
         pageSizes.add(temp50);
-        pageSizes.add(temp100);
         BillPageSizeAdapter pageSizeAdapter = new BillPageSizeAdapter(context, pageSizes);
         spinner.setAdapter(pageSizeAdapter);
 
@@ -660,8 +656,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         BaseItem dateSort = new BaseItem(SORTBYDATE,"by date");
         BaseItem voteSort = new BaseItem(SORTBYVOTES, "by votes");
         BaseItem nameSort = new BaseItem(SORTBYNAME, "by name");
-        sortOptions.add(nameSort);
         sortOptions.add(dateSort);
+        sortOptions.add(nameSort);
         sortOptions.add(voteSort);
         BillSortOptionAdapter pageSortAdapter = new BillSortOptionAdapter(context, sortOptions);
         spinnerSort.setAdapter(pageSortAdapter);

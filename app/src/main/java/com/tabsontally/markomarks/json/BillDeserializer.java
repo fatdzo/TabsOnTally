@@ -2,7 +2,6 @@ package com.tabsontally.markomarks.json;
 
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonDeserializationContext;
@@ -10,13 +9,12 @@ import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
-import com.tabsontally.markomarks.model.Bill;
+import com.tabsontally.markomarks.model.json.Bill;
 
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;

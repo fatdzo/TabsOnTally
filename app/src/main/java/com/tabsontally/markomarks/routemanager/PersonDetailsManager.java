@@ -11,8 +11,7 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.tabsontally.markomarks.json.PersonDetailsDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
-import com.tabsontally.markomarks.model.PersonDetails;
-import com.tabsontally.markomarks.model.minor.ContactDetail;
+import com.tabsontally.markomarks.model.json.PersonDetails;
 
 /**
  * Created by MarkoPhillipMarkovic on 2/11/2016.

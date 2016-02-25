@@ -3,7 +3,6 @@ package com.tabsontally.markomarks.routemanager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -13,8 +12,8 @@ import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
 import com.tabsontally.markomarks.model.APIConfig;
 import com.tabsontally.markomarks.model.LegislatorVotingOption;
-import com.tabsontally.markomarks.model.Meta;
-import com.tabsontally.markomarks.model.Vote;
+import com.tabsontally.markomarks.model.json.Meta;
+import com.tabsontally.markomarks.model.json.Vote;
 import com.tabsontally.markomarks.model.items.VoteItem;
 
 import java.util.ArrayList;
@@ -45,7 +44,7 @@ public class VoteManager extends BaseRouteManager {
         mVotes = new HashMap<>();
         mUsePaging = true;
         mGson = gson;
-        mInterval = 1;
+        mInterval = 3;
 
         switchState(IDLE);
     }
@@ -66,7 +65,7 @@ public class VoteManager extends BaseRouteManager {
     {
         mStartPage = startPage;
 
-        if(mStartPage <= mMeta.Pages && !mPagesPulled.contains(startPage))
+        if(mStartPage <= mMeta.Pages)
         {
             pullRecordStep(startPage, mPersonId, mPersonName, mVotingOption);
         }
@@ -79,6 +78,12 @@ public class VoteManager extends BaseRouteManager {
         if(page > (mStartPage + mInterval - 1))
         {
             switchState(FINISHED);
+            return;
+        }
+
+        if(mPagesPulled.contains(page))
+        {
+            pullRecordStep(page+1, personId, personName, legislatorVoteOption);
             return;
         }
 
@@ -115,7 +120,7 @@ public class VoteManager extends BaseRouteManager {
                             mVotes.put(personId + vote.getmBillId(), vote);
                         }
 
-                        mPagesPulled.add(mMeta.Page);
+                        mPagesPulled.add(page);
 
                         if (mMeta.Page != mMeta.Pages && mMeta.Page > 0) {
                             mCurrentPage = mMeta.Page + 1;

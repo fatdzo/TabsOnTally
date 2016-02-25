@@ -1,18 +1,14 @@
 package com.tabsontally.markomarks.json;
 
-import android.util.Log;
-
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
-import com.tabsontally.markomarks.model.BillDetail;
-import com.tabsontally.markomarks.model.DocumentObject;
-import com.tabsontally.markomarks.model.VersionObject;
+import com.tabsontally.markomarks.model.json.BillDetail;
+import com.tabsontally.markomarks.model.json.DocumentObject;
+import com.tabsontally.markomarks.model.json.VersionObject;
 import com.tabsontally.markomarks.model.minor.LinkObject;
 
 import java.lang.reflect.Type;
@@ -21,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * Created by MarkoPhillipMarkovic on 2/9/2016.
