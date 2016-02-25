@@ -1,4 +1,4 @@
-package com.tabsontally.markomarks.model.minor;
+package com.tabsontally.markomarks.model.json;
 
 import java.io.Serializable;
 

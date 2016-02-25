@@ -1,17 +1,14 @@
 package com.tabsontally.markomarks.arrayadapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.util.Linkify;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.tabsontally.markomarks.model.minor.ContactDetail;
+import com.tabsontally.markomarks.model.json.ContactDetail;
 import com.tabsontally.markomarks.tabsontally.R;
 
 import java.util.ArrayList;

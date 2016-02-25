@@ -1,4 +1,4 @@
-package com.tabsontally.markomarks.model.minor;
+package com.tabsontally.markomarks.model.json;
 
 /**
  * Created by MarkoPhillipMarkovic on 2/15/2016.

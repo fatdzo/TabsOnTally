@@ -1,7 +1,5 @@
 package com.tabsontally.markomarks.model.json;
 
-import com.tabsontally.markomarks.model.minor.ContactDetail;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;

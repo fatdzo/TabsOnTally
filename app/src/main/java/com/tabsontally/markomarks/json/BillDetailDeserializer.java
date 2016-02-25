@@ -9,7 +9,7 @@ import com.google.gson.JsonParseException;
 import com.tabsontally.markomarks.model.json.BillDetail;
 import com.tabsontally.markomarks.model.json.DocumentObject;
 import com.tabsontally.markomarks.model.json.VersionObject;
-import com.tabsontally.markomarks.model.minor.LinkObject;
+import com.tabsontally.markomarks.model.json.LinkObject;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;

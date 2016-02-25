@@ -7,7 +7,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.tabsontally.markomarks.model.json.PersonDetails;
-import com.tabsontally.markomarks.model.minor.ContactDetail;
+import com.tabsontally.markomarks.model.json.ContactDetail;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
