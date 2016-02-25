@@ -79,6 +79,12 @@ public class BillDetailActivity extends AppCompatActivity {
         initializeControls();
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
     private void initializeControls()
     {
         Intent i = getIntent();

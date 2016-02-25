@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private ArrayList<BillDetailManager> billDetailManagers = new ArrayList<>();
     private ArrayList<PersonDetailsManager> personDetailManages = new ArrayList<>();
     private ArrayList<VoteManager> voteManagers = new ArrayList<>();
+    private Gson voteGson;
 
     private PeopleManager pplManager;
 
@@ -135,11 +136,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     voteManagers.clear();
                     personList.addAll(pplManager.getPersonItemList());
 
-                    final GsonBuilder gsonBuilder = new GsonBuilder();
-                    gsonBuilder.registerTypeAdapter(Vote.class, new VoteDeserializer());
-                    gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
-                    final Gson gson = gsonBuilder.create();
-
                     for (PersonItem p : personList) {
                         if(p.Details == null)
                         {
@@ -149,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                             personDetailManages.add(pdm);
                         }
 
-                        addVoteManagersForPerson(gson, p.Id, p.FullName);
+                        addVoteManagersForPerson(voteGson, p.Id, p.FullName);
                     }
                     break;
                 }
@@ -190,10 +186,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                     }
 
                     voteManagers.clear();
-                    final GsonBuilder gsonBuilder = new GsonBuilder();
-                    gsonBuilder.registerTypeAdapter(Vote.class, new VoteDeserializer());
-                    gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
-                    final Gson gson = gsonBuilder.create();
                     for (PersonItem p : personList) {
 
                         VoteManager temp = new VoteManager(context, tabsApi, gson);
@@ -283,10 +275,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private void getVoteItemList()
     {
-        //CurrentPage = 1;
-        //MaxPage = (int) Math.ceil((double) billList.size() / PageSize);
-        //txtCurrentPage.setText(String.valueOf(CurrentPage) + "/" + String.valueOf(MaxPage));
-
         for(VoteManager vtManager: voteManagers)
         {
             ArrayList<VoteItem> vItems = vtManager.getVoteItems();
@@ -463,7 +451,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         {
             return CurrentPage - 1;
         }
-
         return MinPage;
     }
 
@@ -472,65 +459,70 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        context = MainActivity.this;
 
-        tabsApi = new APIConfig() {
-            @Override
-            public String getUrl() {
-                return "https://tabsontallahassee.com/api/";
+        if(savedInstanceState == null)
+        {
+            context = MainActivity.this;
+
+            tabsApi = new APIConfig() {
+                @Override
+                public String getUrl() {
+                    return "https://tabsontallahassee.com/api/";
+                }
+
+                @Override
+                public String getApiKey() {
+                    return "ad9608f7-d243-4f20-bc34-03c02c42792d";
+                }
+
+                @Override
+                public String getApiKeyHeader() {
+                    return "X-APIKEY";
+                }
+            };
+
+            broadcastManager = LocalBroadcastManager.getInstance(this);
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(PeopleManager.PULL_SUCCESS);
+            filter.addAction(BillManager.PULL_SUCCESS);
+            filter.addAction(BillDetailManager.PULL_SUCCESS);
+            filter.addAction(VoteManager.PULL_SUCCESS);
+            filter.addAction(PersonDetailsManager.PULL_SUCCESS);
+            broadcastManager.registerReceiver(mBroadcastReceiver, filter);
+
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+
+            pplManager = new PeopleManager(context, tabsApi);
+
+            billDetailsDataManager.loadUserFileData(context);
+
+            personDetailsDataManager.loadUserFileData(context);
+            personList = personDetailsDataManager.getPersonItems();
+
+            final GsonBuilder gsonBuilder = new GsonBuilder();
+            gsonBuilder.registerTypeAdapter(Vote.class, new VoteDeserializer());
+            gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
+            voteGson = gsonBuilder.create();
+
+            for(PersonItem p: personList)
+            {
+                addVoteManagersForPerson(voteGson, p.Id, p.FullName);
             }
 
-            @Override
-            public String getApiKey() {
-                return "ad9608f7-d243-4f20-bc34-03c02c42792d";
+            if(userLocation != null && personList.size() == 0)
+            {
+                Log.e("TABSONTALLY", "PERSON LIST SIZE GPS COORDINATES " + String.valueOf(personList.size()));
+                pplManager.pullPeopleFromLatLong(userLocation.getLatitude(), userLocation.getLongitude());
+            }
+            else if (personList.size() == 0)
+            {
+                pplManager.pullPeopleFromLatLong(28.43, -81.36);
             }
 
-            @Override
-            public String getApiKeyHeader() {
-                return "X-APIKEY";
-            }
-        };
-
-        broadcastManager = LocalBroadcastManager.getInstance(this);
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(PeopleManager.PULL_SUCCESS);
-        filter.addAction(BillManager.PULL_SUCCESS);
-        filter.addAction(BillDetailManager.PULL_SUCCESS);
-        filter.addAction(VoteManager.PULL_SUCCESS);
-        filter.addAction(PersonDetailsManager.PULL_SUCCESS);
-        broadcastManager.registerReceiver(mBroadcastReceiver, filter);
-
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-
-        pplManager = new PeopleManager(context, tabsApi);
-
-        billDetailsDataManager.loadUserFileData(context);
-
-        personDetailsDataManager.loadUserFileData(context);
-        personList = personDetailsDataManager.getPersonItems();
-
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(Vote.class, new VoteDeserializer());
-        gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
-        final Gson gson = gsonBuilder.create();
-
-        for(PersonItem p: personList)
-        {
-            addVoteManagersForPerson(gson, p.Id, p.FullName);
-        }
-
-        if(userLocation != null && personList.size() == 0)
-        {
-            Log.e("TABSONTALLY", "PERSON LIST SIZE GPS COORDINATES " + String.valueOf(personList.size()));
-            pplManager.pullPeopleFromLatLong(userLocation.getLatitude(), userLocation.getLongitude());
-        }
-        else if (personList.size() == 0)
-        {
-            pplManager.pullPeopleFromLatLong(28.43, -81.36);
         }
 
         InitializeControls();
