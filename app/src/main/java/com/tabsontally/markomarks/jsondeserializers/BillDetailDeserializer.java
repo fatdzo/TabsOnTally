@@ -1,4 +1,4 @@
-package com.tabsontally.markomarks.json;
+package com.tabsontally.markomarks.jsondeserializers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;

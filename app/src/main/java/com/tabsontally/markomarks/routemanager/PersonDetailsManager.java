@@ -9,7 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.tabsontally.markomarks.json.PersonDetailsDeserializer;
+import com.tabsontally.markomarks.jsondeserializers.PersonDetailsDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
 import com.tabsontally.markomarks.model.json.PersonDetails;
 

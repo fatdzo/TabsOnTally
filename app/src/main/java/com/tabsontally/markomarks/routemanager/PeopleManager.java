@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.tabsontally.markomarks.json.PersonDeserializer;
+import com.tabsontally.markomarks.jsondeserializers.PersonDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
 import com.tabsontally.markomarks.model.json.Person;
 import com.tabsontally.markomarks.model.items.PersonItem;
