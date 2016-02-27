@@ -1,36 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:id="@+id/lin_legislator"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:clickable="true"
+    android:weightSum="1.0"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    >
 
-    <LinearLayout
-        android:id="@+id/lin_legislator"
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:id="@+id/chb_legislator_is_selected"
+        android:duplicateParentState="true"
+        android:clickable="false"
+        />
+
+    <ImageView
+        android:id="@+id/img_legislator_list_image_item"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:paddingRight="10dp"
+        android:src="@drawable/places_ic_clear"
+        android:duplicateParentState="true"
+        android:clickable="false"
+        />
+    <TextView
+        android:id="@+id/txt_legislator_list_name_item"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        >
-
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/chb_legislator_is_selected" />
-
-        <ImageView
-            android:id="@+id/img_legislator_list_image_item"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:paddingRight="10dp"
-            android:src="@drawable/places_ic_clear"
-            />
-        <TextView
-            android:id="@+id/txt_legislator_list_name_item"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16dp"
-            android:textStyle="bold"
-            android:text="Lastname, Name"
-            />
-    </LinearLayout>
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        android:text="Lastname, Name"
+        android:duplicateParentState="true"
+        android:clickable="false"
+        />
 
 </LinearLayout>
