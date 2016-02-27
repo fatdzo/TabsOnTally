@@ -44,7 +44,7 @@ public class VoteManager extends BaseRouteManager {
         mVotes = new HashMap<>();
         mUsePaging = true;
         mGson = gson;
-        mInterval = 3;
+        mInterval = 1;
 
         switchState(IDLE);
     }

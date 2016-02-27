@@ -44,7 +44,11 @@ public class BillItem implements Serializable, Comparable<BillItem> {
             {
                 return 1;
             }
-            return -1;
+            else if(e1.Votes.size() > e2.Votes.size())
+            {
+                return -1;
+            }
+            return 0;
         }
     };
 

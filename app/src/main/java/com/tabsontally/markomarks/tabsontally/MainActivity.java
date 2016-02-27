@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,8 +25,6 @@ import com.tabsontally.markomarks.arrayadapters.BillSortOptionAdapter;
 import com.tabsontally.markomarks.model.json.BillDetail;
 import com.tabsontally.markomarks.model.json.PersonDetails;
 import com.tabsontally.markomarks.model.db.BillDetailDB;
-import com.tabsontally.markomarks.dbManager.BillDetailsDataManager;
-import com.tabsontally.markomarks.dbManager.PersonItemDataManager;
 import com.tabsontally.markomarks.model.items.BaseItem;
 import com.tabsontally.markomarks.model.items.PageSizeItem;
 import com.tabsontally.markomarks.routemanager.BillDetailManager;
@@ -49,7 +46,7 @@ import com.tabsontally.markomarks.model.items.VoteItem;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
+public class MainActivity extends BaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener  {
 
     public static final int SORTBYDATE = 0;
     public static final int SORTBYVOTES = 1;
@@ -57,10 +54,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
     private int CurrentSort = SORTBYDATE;
 
-    private Context context;
     private BillAdapter billAdapter;
-
-    private APIConfig tabsApi;
 
     GoogleApiClient mGoogleApiClient;
 
@@ -70,9 +64,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Gson voteGson;
 
     private PeopleManager pplManager;
-
-    BillDetailsDataManager billDetailsDataManager = new BillDetailsDataManager();
-    PersonItemDataManager personDetailsDataManager = new PersonItemDataManager();
 
     private ListView billsListView;
     private ArrayList<PersonItem> personList = new ArrayList<>();
@@ -93,8 +84,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
     private Button btn_Next5PagesButton;
 
     private Location userLocation;
-
-    LocalBroadcastManager broadcastManager;
 
     BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -119,13 +108,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                                     if(pdm.getmPersonId().equals(p.Id))
                                     {
                                         p.Details = tempDetails;
-                                        personDetailsDataManager.addPersonDetailToContent(context, p.Details);
+                                        personItemDataManager.addPersonDetailToContent(context, p.Details);
                                     }
                                 }
                             }
-
                         }
-
                     }
 
                     billAdapter.updatePersonList(personList);
@@ -170,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
                         }
                     }
                     refreshBillListAndPaginate();
-                    //billAdapter.notifyDataSetChanged();
                     break;
                 }
                 case BillManager.PULL_SUCCESS: {
@@ -389,7 +375,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             int minValue = (CurrentPage - 1) * PageSize;
 
-
             if(CurrentSort == SORTBYDATE)
             {
                 Collections.sort(displayList, BillItem.UpdatedAtComparator);
@@ -398,14 +383,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
             {
                 Collections.sort(displayList, BillItem.TitleComparator);
             }
-
             if(CurrentSort == SORTBYVOTES)
             {
                 Collections.sort(displayList, BillItem.BillVotesComparator);
             }
 
             ArrayList<BillItem> resultList = new ArrayList<>(displayList.subList(minValue, maxValue));
-
 
             billAdapter = new BillAdapter(context, resultList, personList, CurrentPage, PageSize);
             billsListView.setAdapter(billAdapter);
@@ -500,22 +483,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
 
             billDetailsDataManager.loadUserFileData(context);
 
-            personDetailsDataManager.loadUserFileData(context);
-            personList = personDetailsDataManager.getPersonItems();
+            personItemDataManager.loadUserFileData(context);
+            personList = personItemDataManager.getPersonItems();
 
             final GsonBuilder gsonBuilder = new GsonBuilder();
             gsonBuilder.registerTypeAdapter(Vote.class, new VoteDeserializer());
             gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
             voteGson = gsonBuilder.create();
 
-            for(PersonItem p: personList)
-            {
+            for (PersonItem p : personList) {
+                if(p.Details == null)
+                {
+                    PersonDetailsManager pdm = new PersonDetailsManager(context, tabsApi, p.Id);
+                    pdm.pullRecords();
+
+                    personDetailManages.add(pdm);
+                }
+
                 addVoteManagersForPerson(voteGson, p.Id, p.FullName);
             }
 
             if(userLocation != null && personList.size() == 0)
             {
-                Log.e("TABSONTALLY", "PERSON LIST SIZE GPS COORDINATES " + String.valueOf(personList.size()));
                 pplManager.pullPeopleFromLatLong(userLocation.getLatitude(), userLocation.getLongitude());
             }
             else if (personList.size() == 0)
@@ -539,6 +528,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.C
         super.onStop();
         mGoogleApiClient.disconnect();
     }
+
 
     private void InitializeControls()
     {

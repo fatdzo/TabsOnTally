@@ -41,6 +41,27 @@ public class PersonItemDataManager {
         mGson = gson;
     }
 
+    public void savePersons(Context ctx, ArrayList<PersonItem> persons)
+    {
+        try {
+            mPersonItems = persons;
+            String result = new Gson().toJson(mPersonItems.clone());
+            FileOutputStream fos;
+            fos = ctx.openFileOutput(USERFILECONTENTNAME, Context.MODE_PRIVATE);
+            fos.write(result.getBytes());
+            fos.flush();
+            fos.close();
+
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+
     public void appendPersonDetailsToPersonAndFile(Context ctx, PersonDetails personDetails)
     {
         try {
@@ -108,7 +129,7 @@ public class PersonItemDataManager {
 
     }
 
-    public void loadFromUserContentData(String data)
+    private void loadFromUserContentData(String data)
     {
         if(data.length() > 0)
         {

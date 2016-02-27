@@ -20,14 +20,10 @@ import com.tabsontally.markomarks.routemanager.BillDetailManager;
 
 import java.util.ArrayList;
 
-public class BillDetailActivity extends AppCompatActivity {
+public class BillDetailActivity extends BaseActivity {
 
     private BillVoterAdapter billVoterAdapter;
-    private Context context;
     ArrayList<VoteItem> billVoteItems = new ArrayList<>();
-    private APIConfig tabsApi;
-
-    LocalBroadcastManager broadcastManager;
 
     TextView txtBillTitleView;
     TextView txtBillDescription;

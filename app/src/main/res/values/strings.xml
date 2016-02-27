@@ -14,4 +14,5 @@
         <item>name</item>
         <item>vote</item>
     </string-array>
+    <string name="title_activity_legislators_list">LegislatorsListActivity</string>
 </resources>

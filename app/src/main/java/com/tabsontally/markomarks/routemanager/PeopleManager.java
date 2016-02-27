@@ -12,8 +12,10 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
+import com.tabsontally.markomarks.jsondeserializers.MetaDeserializer;
 import com.tabsontally.markomarks.jsondeserializers.PersonDeserializer;
 import com.tabsontally.markomarks.model.APIConfig;
+import com.tabsontally.markomarks.model.json.Meta;
 import com.tabsontally.markomarks.model.json.Person;
 import com.tabsontally.markomarks.model.items.PersonItem;
 
@@ -33,14 +35,17 @@ public class PeopleManager extends BaseRouteManager {
 
     private final Gson mGson;
 
+    private Meta mMeta;
+
 
     public PeopleManager(Context context, APIConfig config) {
         super(context, config);
         mPeople = new HashMap<>();
-        mUsePaging = false;
+        mUsePaging = true;
 
         final GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(Person.class, new PersonDeserializer());
+        gsonBuilder.registerTypeAdapter(Meta.class, new MetaDeserializer());
         final Gson gson = gsonBuilder.create();
         mGson = gson;
     }
@@ -90,11 +95,11 @@ public class PeopleManager extends BaseRouteManager {
         return result;
     }
 
-    protected void pullAllRecords() {
+    public void pullAllPeople() {
         if(mState != IDLE){
             return;
         }
-        mState = PULLING;
+        switchState(PULLING);
         mCurrentPage = 1;
         pullRecordStep(mCurrentPage);
     }
@@ -127,6 +132,18 @@ public class PeopleManager extends BaseRouteManager {
                             Person person = mGson.fromJson(element, Person.class);
                             mPeople.put(person.getId(), person);
                         }
+
+
+                        JsonObject meta = result.getAsJsonObject("meta");
+                        mMeta = mGson.fromJson(meta, Meta.class);
+
+                        Log.e("TABSONTALLY", "PEOPLE META ->" + String.valueOf(mMeta.Page));
+
+                        if (mCurrentPage != mMeta.Pages && mMeta.Page > 0) {
+                            mCurrentPage = mCurrentPage + 1;
+                            pullRecordStep(mCurrentPage);
+                        }
+
                         switchState(FINISHED);
                         return;
                     }
