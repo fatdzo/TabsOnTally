@@ -121,4 +121,9 @@ public class LegislatorsListActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    public void onBackPressed() {
+        onSupportNavigateUp();
+    }
 }
